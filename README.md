@@ -114,21 +114,6 @@ The project includes a suite of unit tests for core logic.
 
 ---
 
-## Roadmap
-
-### v1.1 (Planned)
-- [ ] PDF Export
-- [ ] Pressure sensitivity (stylus support)
-- [ ] Lasso selection
-- [ ] Text tool on canvas
-
-### v1.2 (Planned)
-- [ ] Cloud sync
-- [ ] Multiple notebooks
-- [ ] Page templates
-
----
-
 ## License
 
 MIT License - See LICENSE file

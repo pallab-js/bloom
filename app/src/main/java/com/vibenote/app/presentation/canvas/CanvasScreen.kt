@@ -161,6 +161,7 @@ fun CanvasScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val haptic = androidx.compose.ui.platform.LocalHapticFeedback.current
     val coroutineScope = rememberCoroutineScope()
 
     var currentPath by remember { mutableStateOf(Path()) }
@@ -495,6 +496,7 @@ Box(
                                     if (state.isShapeMode && points.size >= 5) {
                                         val shapeStroke = viewModel.applyShapeRecognition(points)
                                         if (shapeStroke != null) {
+                                            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
                                             viewModel.startStroke(shapeStroke)
                                         } else {
                                             viewModel.updateStroke(points)

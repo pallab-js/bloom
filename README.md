@@ -29,16 +29,18 @@
 - **Undo/Redo** - Full history support (capped at 50 entries)
 
 ### Organization
+- **Persistent Preferences** - Remembers your sort order across app restarts
 - **Sort Options** - Sort by newest, oldest, last modified, A-Z, or Z-A
 - **Search** - Find notes by title instantly
-- **Tags/Labels** - Organize notes with custom tags (comma-safe serialization)
+- **Tags/Labels** - Organize notes with custom tags (pipe-safe serialization)
 - **Folders** - Group notes into folders
 - **Favorites** - Mark important notes with favorites
 - **Note Actions** - Long-press for quick actions (favorite, duplicate, delete)
 
 ### Export & Share
-- **PNG Export** - Save notes as images to Pictures/Bloom
+- **PNG Export** - Save notes as high-quality images to Pictures/Bloom
 - **Share Sheet** - Share via Android share intent
+- **Clear Canvas** - Quickly reset a canvas with one tap (supports Undo)
 
 ---
 
@@ -51,7 +53,9 @@
 | Architecture | Clean Architecture + MVVM |
 | DI | Hilt |
 | Database | Room |
+| Persistence | Jetpack DataStore |
 | Async | Kotlin Coroutines + Flow |
+| Testing | JUnit 4, MockK, Turbine |
 | Build | Gradle |
 
 ---
@@ -62,16 +66,27 @@
 app/src/main/java/com/vibenote/app/
 ├── core/theme/           # Design tokens (Colors, Typography, Shapes)
 ├── data/
-│   ├── local/       # Room database (NoteEntity, NoteDao)
+│   ├── local/       # Room database (NoteEntity, NoteDao, Converters, StrokeDto)
 │   └── repository/  # Repository implementations
 ├── di/              # Hilt dependency injection
 ├── domain/
-│   ├── model/       # Domain models (Note, Stroke)
+│   ├── model/       # Domain models (Note, Stroke, CanvasBackground)
 │   └── repository/  # Repository interfaces
 └── presentation/
     ├── canvas/      # Canvas screen + ViewModel + Shape recognition
     ├── dashboard/   # Dashboard screen + ViewModel
     └── BloomActivity.kt
+```
+
+---
+
+## Testing
+
+The project includes a suite of unit tests for core logic.
+
+```bash
+# Run unit tests
+./gradlew testDebugUnitTest
 ```
 
 ---
@@ -88,33 +103,14 @@ app/src/main/java/com/vibenote/app/
 
 ---
 
-## Design System
-
-### Colors
-
-| Token | Hex | Usage |
-|-------|-----|-------|
-| BackgroundDark | #171717 | Main background |
-| SurfaceDeep | #0F0F0F | Cards, toolbar |
-| BrandGreen | #3ECF8E | Primary accent |
-| ActionGreen | #00C573 | Buttons, actions |
-| TextPrimary | #FAFAFA | Primary text |
-| TextMuted | #898989 | Secondary text |
-| BorderStandard | #2E2E2E | Standard borders |
-
-### Typography
-
-- **Display/Hero**: Font Family Default, Weight 400
-- **Code/Labels**: Font Family Monospace, Weight Medium
-
----
-
 ## Security
 
 - **Local Storage Only** - All data stored locally on device
 - **No Network Permissions** - App does not require internet
+- **Encapsulated Backups** - Device backups are disabled (`allowBackup=false`) to ensure notes stay on-device
 - **Room Migrations** - Proper schema versioning for data integrity
-- **ProGuard Enabled** - Code obfuscation in release builds
+- **ProGuard Ready** - Optimized and obfuscated release builds with pre-configured rules
+- **Input Validation** - Large stroke data handled safely to prevent OOM/DoS attacks
 
 ---
 

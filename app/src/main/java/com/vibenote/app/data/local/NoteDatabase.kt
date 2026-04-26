@@ -31,5 +31,14 @@ abstract class NoteDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE notes ADD COLUMN canvasBackground TEXT NOT NULL DEFAULT 'dark'")
             }
         }
+        
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `folders` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `parentId` TEXT, `createdAt` INTEGER NOT NULL, PRIMARY KEY(`id`))")
+                db.execSQL("ALTER TABLE `notes` ADD COLUMN `folderId` TEXT")
+                db.execSQL("ALTER TABLE `notes` ADD COLUMN `sourceUri` TEXT")
+                db.execSQL("ALTER TABLE `notes` ADD COLUMN `contentJson` TEXT")
+            }
+        }
     }
 }

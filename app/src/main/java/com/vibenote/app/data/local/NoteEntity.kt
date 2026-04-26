@@ -15,5 +15,8 @@ data class NoteEntity(
     val isFavorite: Boolean = false,
     val tags: String = "",
     val folder: String = "",
-    val canvasBackground: CanvasBackground = CanvasBackground.DARK
+    val canvasBackground: CanvasBackground = CanvasBackground.DARK,
+    val folderId: String? = null,
+    val sourceUri: String? = null,
+    val contentJson: String? = null
 )

@@ -61,6 +61,12 @@ object DatabaseModule {
     fun provideNoteDao(database: NoteDatabase): NoteDao {
         return database.noteDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideFolderDao(database: NoteDatabase): com.vibenote.app.data.local.FolderDao {
+        return database.folderDao()
+    }
 }
 
 @Module

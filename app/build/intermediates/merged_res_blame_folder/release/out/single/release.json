@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-57:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-56:/drawable_ic_launcher_foreground.png.flat",
+        "source": "com.vibenote.app-main-57:/drawable/ic_launcher_foreground.png"
+    }
+]

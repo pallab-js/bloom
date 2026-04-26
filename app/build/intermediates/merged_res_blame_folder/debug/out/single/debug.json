@@ -1,0 +1,30 @@
+[
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/drawable_ic_launcher_foreground.png.flat",
+        "source": "com.vibenote.app-main-62:/drawable/ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-xhdpi/ic_launcher.png"
+    }
+]

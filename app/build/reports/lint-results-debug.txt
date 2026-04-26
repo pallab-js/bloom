@@ -1,0 +1,140 @@
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:51: Warning: A newer version of androidx.compose:compose-bom than 2023.10.01 is available: 2026.04.01 [GradleDependency]
+    def composeBom = platform('androidx.compose:compose-bom:2023.10.01')
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:54: Warning: A newer version of androidx.core:core-ktx than 1.12.0 is available: 1.18.0 [GradleDependency]
+    implementation 'androidx.core:core-ktx:1.12.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:55: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.6.2 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:56: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.6.2 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.6.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:57: Warning: A newer version of androidx.activity:activity-compose than 1.8.1 is available: 1.13.0 [GradleDependency]
+    implementation 'androidx.activity:activity-compose:1.8.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:64: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.6.2 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:65: Warning: A newer version of androidx.navigation:navigation-compose than 2.7.5 is available: 2.9.8 [GradleDependency]
+    implementation 'androidx.navigation:navigation-compose:2.7.5'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:69: Warning: A newer version of androidx.hilt:hilt-navigation-compose than 1.1.0 is available: 1.3.0 [GradleDependency]
+    implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:71: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4 [GradleDependency]
+    implementation 'androidx.room:room-runtime:2.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:72: Warning: A newer version of androidx.room:room-ktx than 2.6.1 is available: 2.8.4 [GradleDependency]
+    implementation 'androidx.room:room-ktx:2.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/build.gradle:73: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4 [GradleDependency]
+    ksp 'androidx.room:room-compiler:2.6.1'
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/java/com/vibenote/app/presentation/canvas/CanvasViewModel.kt:58: Warning: This field leaks a context object [StaticFieldLeak]
+    @ApplicationContext private val context: Context,
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "StaticFieldLeak":
+   A static field will leak contexts.
+
+   Non-static inner classes have an implicit reference to their outer class.
+   If that outer class is for example a Fragment or Activity, then this
+   reference means that the long-running handler/loader/task will hold a
+   reference to the activity which prevents it from getting garbage
+   collected.
+
+   Similarly, direct field references to activities and fragments from these
+   longer running instances can cause leaks.
+
+   ViewModel classes should never point to Views or non-application Contexts.
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:3: Warning: The resource R.color.background_dark appears to be unused [UnusedResources]
+    <color name="background_dark">#FF171717</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:5: Warning: The resource R.color.surface_deep appears to be unused [UnusedResources]
+    <color name="surface_deep">#FF0F0F0F</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:6: Warning: The resource R.color.brand_green appears to be unused [UnusedResources]
+    <color name="brand_green">#FF3ECF8E</color>
+           ~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:7: Warning: The resource R.color.action_green appears to be unused [UnusedResources]
+    <color name="action_green">#FF00C573</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:8: Warning: The resource R.color.text_primary appears to be unused [UnusedResources]
+    <color name="text_primary">#FFFAFAFA</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:9: Warning: The resource R.color.text_muted appears to be unused [UnusedResources]
+    <color name="text_muted">#FF898989</color>
+           ~~~~~~~~~~~~~~~~~
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml:10: Warning: The resource R.color.border_standard appears to be unused [UnusedResources]
+    <color name="border_standard">#FF2E2E2E</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:2: Warning: The application adaptive icon is missing a monochrome tag [MonochromeLauncherIcon]
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+^
+
+   Explanation for issues of type "MonochromeLauncherIcon":
+   If android:roundIcon and android:icon are both in your manifest, you must
+   either remove the reference to android:roundIcon if it is not needed; or,
+   supply the monochrome icon in the drawable defined by the android:roundIcon
+   and android:icon attribute.
+
+   For example, if android:roundIcon and android:icon are both in the
+   manifest, a launcher might choose to use android:roundIcon over
+   android:icon to display the adaptive app icon. Therefore, your themed
+   application iconwill not show if your monochrome attribute is not also
+   specified in android:roundIcon.
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png: Warning: The image ic_launcher.png varies significantly in its density-independent (dip) size across the various density versions: mipmap-hdpi/ic_launcher.png: 43x43 dp (64x64 px), mipmap-mdpi/ic_launcher.png: 64x64 dp (64x64 px), mipmap-xhdpi/ic_launcher.png: 32x32 dp (64x64 px), mipmap-xxhdpi/ic_launcher.png: 21x21 dp (64x64 px), mipmap-xxxhdpi/ic_launcher.png: 16x16 dp (64x64 px) [IconDipSize]
+
+   Explanation for issues of type "IconDipSize":
+   Checks the all icons which are provided in multiple densities, all compute
+   to roughly the same density-independent pixel (dip) size. This catches
+   errors where images are either placed in the wrong folder, or icons are
+   changed to new sizes but some folders are forgotten.
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/drawable/ic_launcher_foreground.png: Warning: Found bitmap drawable res/drawable/ic_launcher_foreground.png in densityless folder [IconLocation]
+
+   Explanation for issues of type "IconLocation":
+   The res/drawable folder is intended for density-independent graphics such
+   as shapes defined in XML. For bitmaps, move it to drawable-mdpi and
+   consider providing higher and lower resolution versions in drawable-ldpi,
+   drawable-hdpi and drawable-xhdpi. If the icon really is density independent
+   (for example a solid color) you can place it in drawable-nodpi.
+
+   https://developer.android.com/guide/practices/screens_support.html
+
+/Users/pallabpc/Desktop/vibenote/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png: Warning: The following unrelated icon files have identical contents: ic_launcher_foreground.png, ic_launcher.png, ic_launcher.png, ic_launcher.png, ic_launcher.png, ic_launcher.png [IconDuplicates]
+
+   Explanation for issues of type "IconDuplicates":
+   If an icon is repeated under different names, you can consolidate and just
+   use one of the icons and delete the others to make your application
+   smaller. However, duplicated icons usually are not intentional and can
+   sometimes point to icons that were accidentally overwritten or accidentally
+   not updated.
+
+0 errors, 23 warnings

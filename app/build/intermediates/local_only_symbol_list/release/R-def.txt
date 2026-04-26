@@ -1,0 +1,12 @@
+R_DEF: Internal format may change without notice
+local
+color action_green
+color background_dark
+color border_standard
+color brand_green
+color ic_launcher_background
+color surface_deep
+color text_muted
+color text_primary
+drawable ic_launcher_foreground
+mipmap ic_launcher

@@ -13,6 +13,13 @@
 
 ## Features
 
+### Digital Research Lab Workspace
+- **Workspace Sidebar** - Collapsible navigation for Folders, Tags, and Favorites.
+- **Split-View Reference Pane** - Open images or documents on the left while taking notes on the right.
+- **Layered Input System** - Foundations of structured text with a transparent ink overlay for annotations.
+- **Folder Management** - Organize research into project-based folders.
+- **Advanced Metadata** - Hybrid organization using both Folders and Tags.
+
 ### Canvas Experience
 - **Infinite Canvas** - Draw freely without boundaries
 - **Shape Recognition** - Automatically converts freehand strokes to shapes (lines, rectangles, circles)

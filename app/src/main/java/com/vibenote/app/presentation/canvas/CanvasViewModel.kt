@@ -245,6 +245,32 @@ class CanvasViewModel @Inject constructor(
         }
     }
 
+    fun updateContent(content: String) {
+        _state.update { it.copy(contentJson = content) }
+        scheduleSaveContent()
+    }
+
+    private var contentSaveJob: Job? = null
+    private fun scheduleSaveContent() {
+        contentSaveJob?.cancel()
+        contentSaveJob = viewModelScope.launch {
+            delay(1500)
+            val noteId = _state.value.noteId
+            if (noteId.isEmpty()) return@launch
+            val content = _state.value.contentJson
+            withContext(Dispatchers.IO) {
+                try {
+                    val note = noteRepository.getNoteById(noteId)
+                    if (note != null) {
+                        noteRepository.updateNote(note.copy(contentJson = content, updatedAt = System.currentTimeMillis()))
+                    }
+                } catch (e: Exception) {
+                    _state.update { it.copy(errorMessage = "Failed to save text content") }
+                }
+            }
+        }
+    }
+
     fun deleteNote(onDeleted: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val noteId = _state.value.noteId

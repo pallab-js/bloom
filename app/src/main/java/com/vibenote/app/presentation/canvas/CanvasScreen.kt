@@ -725,6 +725,7 @@ Box(
                 }
             }
         }
+        }
     }
 
     // Edit title dialog
@@ -814,6 +815,37 @@ Box(
     if (showExportDialog && exportedUri != null) {
         AlertDialog(
             onDismissRequest = {
+                showExportDialog = false
+                exportedUri = null
+            },
+            title = { Text("Export Successful", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Note exported to Pictures/VibeNote", color = LocalVibeColors.current.textMuted) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "image/png"
+                        putExtra(Intent.EXTRA_STREAM, exportedUri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Note"))
+                    showExportDialog = false
+                    exportedUri = null
+                }) {
+                    Text("Share", color = LocalVibeColors.current.brand)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showExportDialog = false
+                    exportedUri = null
+                }) {
+                    Text("Close", color = LocalVibeColors.current.textMuted)
+                }
+            },
+            containerColor = LocalVibeColors.current.background
+        )
+    }
+}ssRequest = {
                 showExportDialog = false
                 exportedUri = null
             },

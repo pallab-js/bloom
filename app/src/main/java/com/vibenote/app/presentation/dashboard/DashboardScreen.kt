@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -232,27 +233,45 @@ fun DashboardScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(32.dp)
                 ) {
-                    Icon(
-                        Icons.Default.EditNote,
-                        contentDescription = null,
-                        tint = VibeColors.TextMuted,
-                        modifier = Modifier.size(64.dp)
-                    )
-                    Spacer(Modifier.height(16.dp))
                     Text(
-                        if (isSearchActive) "No notes match \"$searchQuery\"" else "No notes yet",
+                        text = "✎✨",
+                        fontSize = 80.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Text(
+                        text = if (isSearchActive) "No notes match \"$searchQuery\"" else "Your garden is empty",
+                        color = VibeColors.TextPrimary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = if (isSearchActive) "Try a different search term" else "Start blooming by creating your first note",
                         color = VibeColors.TextMuted,
-                        fontSize = 16.sp
+                        fontSize = 14.sp,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        fontFamily = FontFamily.Monospace
                     )
                     if (!isSearchActive) {
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            "Tap + to create your first note",
-                            color = VibeColors.TextMuted,
-                            fontSize = 13.sp
-                        )
+                        Spacer(Modifier.height(32.dp))
+                        androidx.compose.material3.Button(
+                            onClick = onNewNote,
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                containerColor = VibeColors.BrandGreen,
+                                contentColor = VibeColors.SurfaceDeep
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.height(48.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(Modifier.width(8.dp))
+                            Text("Start Blooming", fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }

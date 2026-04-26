@@ -110,7 +110,12 @@ The project includes a suite of unit tests for core logic.
 - **Encapsulated Backups** - Device backups are disabled (`allowBackup=false`) to ensure notes stay on-device
 - **Room Migrations** - Proper schema versioning for data integrity
 - **ProGuard Ready** - Optimized and obfuscated release builds with pre-configured rules
-- **Input Validation** - Large stroke data handled safely to prevent OOM/DoS attacks
+- **Input Validation** - Comprehensive protection against malicious data:
+  - Stroke point count limited to 5,000 per stroke
+  - String length validation (max 100KB per stroke)
+  - Total stroke count limited to 10,000 per note
+  - File size validation (max 10MB per note file)
+  - Malformed data gracefully handled without crashes
 
 ---
 

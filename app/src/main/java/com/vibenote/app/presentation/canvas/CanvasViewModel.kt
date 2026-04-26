@@ -111,13 +111,17 @@ class CanvasViewModel @Inject constructor(
                 val strokesFile = File(context.filesDir, "strokes_$noteId.json")
                 if (strokesFile.exists()) {
                     try {
+                        if (strokesFile.length() > 10_000_000) {
+                            _state.update { it.copy(strokes = emptyList(), isLoading = false, errorMessage = "Note file too large") }
+                            return@launch
+                        }
                         val json = strokesFile.readText()
                         val type = object : TypeToken<List<StrokeDto>>() {}.type
                         val dtos: List<StrokeDto> = gson.fromJson(json, type) ?: emptyList()
-                        val strokes = dtos.map { it.toDomain() }
+                        val strokes = dtos.take(10000).map { it.toDomain() }
                         _state.update { it.copy(strokes = strokes, isLoading = false) }
                     } catch (e: Exception) {
-                        _state.update { it.copy(strokes = emptyList(), isLoading = false) }
+                        _state.update { it.copy(strokes = emptyList(), isLoading = false, errorMessage = "Failed to load note") }
                     }
                 } else {
                     _state.update { it.copy(isLoading = false) }

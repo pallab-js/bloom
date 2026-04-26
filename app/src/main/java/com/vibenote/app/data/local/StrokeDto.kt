@@ -14,7 +14,18 @@ data class StrokeDto(
 )
 
 fun StrokeDto.toDomain(): Stroke {
-    val pointsList = points.split(";").mapNotNull { pair ->
+    if (points.length > 100_000) {
+        return Stroke(
+            points = emptyList(),
+            colorValue = colorValue,
+            strokeWidth = strokeWidth,
+            isEraser = isEraser,
+            isHighlighter = isHighlighter,
+            strokeType = strokeType
+        )
+    }
+    
+    val pointsList = points.split(";").take(5000).mapNotNull { pair ->
         val coords = pair.split(",")
         if (coords.size == 2) {
             try {

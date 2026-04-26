@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.vibenote.app.core.theme.LocalVibeColors
 
 @Composable
 fun VibePillButton(
@@ -24,12 +25,12 @@ fun VibePillButton(
         modifier = modifier,
         shape = RoundedCornerShape(9999.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPrimary) VibeColors.SurfaceDeep else VibeColors.SurfaceDeep,
-            contentColor = VibeColors.TextPrimary
+            containerColor = if (isPrimary) LocalVibeColors.current.surface else LocalVibeColors.current.surface,
+            contentColor = LocalVibeColors.current.textPrimary
         ),
         border = BorderStroke(
             1.dp,
-            if (isPrimary) VibeColors.TextPrimary else VibeColors.BorderStandard
+            if (isPrimary) LocalVibeColors.current.textPrimary else LocalVibeColors.current.borderStandard
         ),
         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 8.dp),
         elevation = ButtonDefaults.buttonElevation(

@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
+import com.vibenote.app.core.theme.LocalVibeColors
 import com.vibenote.app.core.theme.VibeColors
 import com.vibenote.app.core.theme.VibeNoteTheme
 import com.vibenote.app.domain.model.Note
@@ -44,12 +45,14 @@ class BloomActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            VibeNoteTheme {
+            var isDarkMode by remember { mutableStateOf(true) }
+            
+            VibeNoteTheme(darkTheme = isDarkMode) {
                 val navController = rememberNavController()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = VibeColors.BackgroundDark
+                    color = LocalVibeColors.current.background
                 ) {
                     NavHost(
                         navController = navController,
@@ -57,15 +60,15 @@ class BloomActivity : ComponentActivity() {
                     ) {
                         composable("dashboard") {
                             var showNewNoteDialog by remember { mutableStateOf(false) }
-                            var pendingNavigateTo by remember { mutableStateOf<String?>(null) }
-
+                            
                             DashboardScreen(
                                 onNoteClick = { noteId ->
                                     navController.navigate("canvas/$noteId")
                                 },
                                 onNewNote = {
                                     showNewNoteDialog = true
-                                }
+                                },
+                                onToggleTheme = { isDarkMode = !isDarkMode }
                             )
 
                             if (showNewNoteDialog) {

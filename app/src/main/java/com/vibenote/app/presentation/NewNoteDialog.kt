@@ -16,7 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.vibenote.app.core.theme.LocalVibeColors
 import com.vibenote.app.core.theme.VibeColors
 
 @Composable
@@ -31,7 +32,7 @@ fun NewNoteDialog(
         title = {
             Text(
                 text = "New Note",
-                color = VibeColors.TextPrimary
+                color = LocalVibeColors.current.textPrimary
             )
         },
         text = {
@@ -41,10 +42,10 @@ fun NewNoteDialog(
                 label = { Text("Title") },
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = VibeColors.TextPrimary,
-                    unfocusedTextColor = VibeColors.TextPrimary,
-                    focusedBorderColor = VibeColors.BrandGreen,
-                    unfocusedBorderColor = VibeColors.BorderStandard
+                    focusedTextColor = LocalVibeColors.current.textPrimary,
+                    unfocusedTextColor = LocalVibeColors.current.textPrimary,
+                    focusedBorderColor = LocalVibeColors.current.brand,
+                    unfocusedBorderColor = LocalVibeColors.current.borderStandard
                 ),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -55,7 +56,7 @@ fun NewNoteDialog(
             ) {
                 Text(
                     text = "Create",
-                    color = VibeColors.BrandGreen
+                    color = LocalVibeColors.current.brand
                 )
             }
         },
@@ -63,10 +64,10 @@ fun NewNoteDialog(
             TextButton(onClick = onDismiss) {
                 Text(
                     text = "Cancel",
-                    color = VibeColors.TextMuted
+                    color = LocalVibeColors.current.textMuted
                 )
             }
         },
-        containerColor = VibeColors.BackgroundDark
+        containerColor = LocalVibeColors.current.background
     )
 }

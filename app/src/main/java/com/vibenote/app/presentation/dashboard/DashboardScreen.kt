@@ -24,7 +24,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.EditNote
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.AlertDialog
@@ -61,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vibenote.app.core.theme.LocalVibeColors
 import com.vibenote.app.core.theme.VibeColors
 import com.vibenote.app.domain.model.Note
 import java.text.SimpleDateFormat
@@ -72,7 +75,8 @@ import java.util.Locale
 fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
     onNoteClick: (String) -> Unit,
-    onNewNote: () -> Unit
+    onNewNote: () -> Unit,
+    onToggleTheme: () -> Unit
 ) {
     val notes: List<Note> by viewModel.notes.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -109,13 +113,13 @@ fun DashboardScreen(
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { viewModel.setSearchQuery(it) },
-                                placeholder = { Text("Search notes...", color = VibeColors.TextMuted) },
+                                placeholder = { Text("Search notes...", color = LocalVibeColors.current.textMuted) },
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = VibeColors.TextPrimary,
-                                    unfocusedTextColor = VibeColors.TextPrimary,
-                                    focusedBorderColor = VibeColors.BrandGreen,
-                                    unfocusedBorderColor = VibeColors.BorderStandard
+                                    focusedTextColor = LocalVibeColors.current.textPrimary,
+                                    unfocusedTextColor = LocalVibeColors.current.textPrimary,
+                                    focusedBorderColor = LocalVibeColors.current.brand,
+                                    unfocusedBorderColor = LocalVibeColors.current.borderStandard
                                 ),
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -126,12 +130,12 @@ fun DashboardScreen(
                                     fontSize = 18.sp,
                                     fontFamily = FontFamily.Monospace,
                                     fontWeight = FontWeight.Medium,
-                                    color = VibeColors.TextPrimary
+                                    color = LocalVibeColors.current.textPrimary
                                 )
                                 Text(
                                     text = "${notes.size} note${if (notes.size != 1) "s" else ""}",
                                     fontSize = 11.sp,
-                                    color = VibeColors.TextMuted,
+                                    color = LocalVibeColors.current.textMuted,
                                     fontFamily = FontFamily.Monospace
                                 )
                             }
@@ -144,18 +148,25 @@ fun DashboardScreen(
                             showSearch = false
                             viewModel.setSearchQuery("")
                         }) {
-                            Text("Cancel", color = VibeColors.TextMuted)
+                            Text("Cancel", color = LocalVibeColors.current.textMuted)
                         }
                     }
                 },
                 actions = {
                     if (!showSearch) {
+                        IconButton(onClick = onToggleTheme) {
+                            Icon(
+                                imageVector = if (LocalVibeColors.current.isDark) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                contentDescription = "Toggle theme",
+                                tint = LocalVibeColors.current.textPrimary
+                            )
+                        }
                         Box {
                             IconButton(onClick = { showSortMenu = true }) {
                                 Icon(
                                     Icons.Default.Sort,
                                     contentDescription = "Sort notes",
-                                    tint = VibeColors.TextPrimary
+                                    tint = LocalVibeColors.current.textPrimary
                                 )
                             }
                             DropdownMenu(
@@ -163,35 +174,35 @@ fun DashboardScreen(
                                 onDismissRequest = { showSortMenu = false }
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Newest first", color = VibeColors.TextPrimary) },
+                                    text = { Text("Newest first", color = LocalVibeColors.current.textPrimary) },
                                     onClick = {
                                         viewModel.setSortOrder(SortOrder.NEWEST_FIRST)
                                         showSortMenu = false
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Oldest first", color = VibeColors.TextPrimary) },
+                                    text = { Text("Oldest first", color = LocalVibeColors.current.textPrimary) },
                                     onClick = {
                                         viewModel.setSortOrder(SortOrder.OLDEST_FIRST)
                                         showSortMenu = false
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Last modified", color = VibeColors.TextPrimary) },
+                                    text = { Text("Last modified", color = LocalVibeColors.current.textPrimary) },
                                     onClick = {
                                         viewModel.setSortOrder(SortOrder.LAST_MODIFIED)
                                         showSortMenu = false
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("A to Z", color = VibeColors.TextPrimary) },
+                                    text = { Text("A to Z", color = LocalVibeColors.current.textPrimary) },
                                     onClick = {
                                         viewModel.setSortOrder(SortOrder.A_TO_Z)
                                         showSortMenu = false
                                     }
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Z to A", color = VibeColors.TextPrimary) },
+                                    text = { Text("Z to A", color = LocalVibeColors.current.textPrimary) },
                                     onClick = {
                                         viewModel.setSortOrder(SortOrder.Z_TO_A)
                                         showSortMenu = false
@@ -203,29 +214,29 @@ fun DashboardScreen(
                             Icon(
                                 Icons.Default.Search,
                                 contentDescription = "Search",
-                                tint = VibeColors.TextPrimary
+                                tint = LocalVibeColors.current.textPrimary
                             )
                         }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VibeColors.BackgroundDark
+                    containerColor = LocalVibeColors.current.background
                 )
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNewNote,
-                containerColor = VibeColors.BrandGreen
+                containerColor = LocalVibeColors.current.brand
             ) {
                 Icon(
                     Icons.Default.Add,
                     contentDescription = "New Note",
-                    tint = VibeColors.SurfaceDeep
+                    tint = LocalVibeColors.current.surface
                 )
             }
         },
-        containerColor = VibeColors.BackgroundDark
+        containerColor = LocalVibeColors.current.background
     ) { padding ->
         if (isEmpty) {
             Box(
@@ -246,7 +257,7 @@ fun DashboardScreen(
                     )
                     Text(
                         text = if (isSearchActive) "No notes match \"$searchQuery\"" else "Your garden is empty",
-                        color = VibeColors.TextPrimary,
+                        color = LocalVibeColors.current.textPrimary,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         fontFamily = FontFamily.Monospace
@@ -254,7 +265,7 @@ fun DashboardScreen(
                     Spacer(Modifier.height(8.dp))
                     Text(
                         text = if (isSearchActive) "Try a different search term" else "Start blooming by creating your first note",
-                        color = VibeColors.TextMuted,
+                        color = LocalVibeColors.current.textMuted,
                         fontSize = 14.sp,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         fontFamily = FontFamily.Monospace
@@ -264,8 +275,8 @@ fun DashboardScreen(
                         androidx.compose.material3.Button(
                             onClick = onNewNote,
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                                containerColor = VibeColors.BrandGreen,
-                                contentColor = VibeColors.SurfaceDeep
+                                containerColor = LocalVibeColors.current.brand,
+                                contentColor = LocalVibeColors.current.surface
                             ),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.height(48.dp)
@@ -305,8 +316,8 @@ items(notes) { note: Note ->
     noteToDelete?.let { note ->
         AlertDialog(
             onDismissRequest = { noteToDelete = null },
-title = { Text("Delete Note", color = VibeColors.TextPrimary) },
-            text = { Text("Delete \"${note.title}\"?", color = VibeColors.TextMuted) },
+title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Delete \"${note.title}\"?", color = LocalVibeColors.current.textMuted) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteNote(noteToDelete!!)
@@ -317,10 +328,10 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
             },
             dismissButton = {
                 TextButton(onClick = { noteToDelete = null }) {
-                    Text("Cancel", color = VibeColors.TextMuted)
+                    Text("Cancel", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = VibeColors.BackgroundDark
+            containerColor = LocalVibeColors.current.background
         )
     }
 
@@ -331,7 +342,7 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
                 showNoteActions = false
                 selectedNote = null
             },
-            containerColor = VibeColors.SurfaceDeep
+            containerColor = LocalVibeColors.current.surface
         ) {
             Column(
                 modifier = Modifier
@@ -342,7 +353,7 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
                     text = selectedNote!!.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = VibeColors.TextPrimary,
+                    color = LocalVibeColors.current.textPrimary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 
@@ -356,7 +367,7 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
                 ) {
                     Text(
                         text = if (selectedNote!!.isFavorite) "Remove from favorites" else "Add to favorites",
-                        color = VibeColors.TextPrimary,
+                        color = LocalVibeColors.current.textPrimary,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -371,7 +382,7 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
                 ) {
                     Text(
                         text = "Duplicate",
-                        color = VibeColors.TextPrimary,
+                        color = LocalVibeColors.current.textPrimary,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -385,7 +396,7 @@ title = { Text("Delete Note", color = VibeColors.TextPrimary) },
                 ) {
                     Text(
                         text = "Delete",
-                        color = VibeColors.TextMuted,
+                        color = LocalVibeColors.current.textMuted,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -416,9 +427,9 @@ fun NoteCard(
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = VibeColors.SurfaceDeep
+            containerColor = LocalVibeColors.current.surface
         ),
-        border = BorderStroke(1.5.dp, VibeColors.BorderStandard.copy(alpha = 0.5f)),
+        border = BorderStroke(1.5.dp, LocalVibeColors.current.borderStandard.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp,
             pressedElevation = 8.dp
@@ -434,7 +445,7 @@ fun NoteCard(
                     .fillMaxWidth()
                     .height(120.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(VibeColors.BackgroundDark.copy(alpha = 0.3f))
+                    .background(LocalVibeColors.current.background.copy(alpha = 0.3f))
                     .padding(8.dp)
             )
             
@@ -444,14 +455,14 @@ fun NoteCard(
                 text = note.title,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = VibeColors.TextPrimary,
+                color = LocalVibeColors.current.textPrimary,
                 maxLines = 1,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
             Text(
                 text = formatDate(note.updatedAt),
                 fontSize = 11.sp,
-                color = VibeColors.TextMuted,
+                color = LocalVibeColors.current.textMuted,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }

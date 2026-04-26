@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke as DrawStroke
 import androidx.compose.ui.graphics.drawscope.scale
+import com.vibenote.app.core.theme.LocalVibeColors
 import com.vibenote.app.domain.model.Stroke
 import com.vibenote.app.domain.model.StrokeType
 import kotlin.math.hypot

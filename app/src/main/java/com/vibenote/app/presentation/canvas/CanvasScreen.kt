@@ -69,8 +69,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.vibenote.app.core.theme.LocalVibeColors
 import com.vibenote.app.core.theme.VibeColors
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.vibenote.app.domain.model.CanvasBackground
@@ -95,7 +97,7 @@ fun List<Offset>.toSmoothedPath(): Path {
 
 @Composable
 fun BackgroundSwatch(type: CanvasBackground, isSelected: Boolean, onClick: () -> Unit) {
-    val borderColor = if (isSelected) VibeColors.BrandGreen else VibeColors.BorderStandard
+    val borderColor = if (isSelected) LocalVibeColors.current.brand else LocalVibeColors.current.borderStandard
     val borderWidth = if (isSelected) 3.dp else 1.dp
 
     Box(
@@ -135,9 +137,9 @@ fun BackgroundSwatch(type: CanvasBackground, isSelected: Boolean, onClick: () ->
 
 @Composable
 fun ToolButton(label: String, isActive: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.2f) else Color.Transparent
-    val textColor = if (isActive) VibeColors.BrandGreen else VibeColors.TextMuted
-    val borderColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.5f) else Color.Transparent
+    val bgColor = if (isActive) LocalVibeColors.current.brand.copy(alpha = 0.2f) else Color.Transparent
+    val textColor = if (isActive) LocalVibeColors.current.brand else LocalVibeColors.current.textMuted
+    val borderColor = if (isActive) LocalVibeColors.current.brand.copy(alpha = 0.5f) else Color.Transparent
     
     Box(
         modifier = Modifier
@@ -199,7 +201,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Edit title",
-                            tint = VibeColors.TextMuted,
+                            tint = LocalVibeColors.current.textMuted,
                             modifier = Modifier.padding(start = 8.dp).size(16.dp)
                         )
                     }
@@ -214,7 +216,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = VibeColors.TextPrimary
+                            tint = LocalVibeColors.current.textPrimary
                         )
                     }
                 },
@@ -223,14 +225,14 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.Undo,
                             contentDescription = "Undo",
-                            tint = if (state.canUndo) VibeColors.TextPrimary else VibeColors.TextMuted
+                            tint = if (state.canUndo) LocalVibeColors.current.textPrimary else LocalVibeColors.current.textMuted
                         )
                     }
                     IconButton(onClick = { viewModel.redo() }, enabled = state.canRedo) {
                         Icon(
                             Icons.Filled.Redo,
                             contentDescription = "Redo",
-                            tint = if (state.canRedo) VibeColors.TextPrimary else VibeColors.TextMuted
+                            tint = if (state.canRedo) LocalVibeColors.current.textPrimary else LocalVibeColors.current.textMuted
                         )
                     }
                     IconButton(onClick = { 
@@ -242,21 +244,21 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.ZoomOutMap,
                             contentDescription = "Reset zoom",
-                            tint = VibeColors.TextPrimary
+                            tint = LocalVibeColors.current.textPrimary
                         )
                     }
                     IconButton(onClick = { showClearDialog = true }) {
                         Icon(
                             Icons.Filled.LayersClear,
                             contentDescription = "Clear canvas",
-                            tint = VibeColors.TextPrimary
+                            tint = LocalVibeColors.current.textPrimary
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             Icons.Filled.Delete,
                             contentDescription = "Delete",
-                            tint = VibeColors.TextPrimary
+                            tint = LocalVibeColors.current.textPrimary
                         )
                     }
                     IconButton(onClick = {
@@ -268,29 +270,29 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.Share,
                             contentDescription = "Export as PNG",
-                            tint = VibeColors.TextPrimary
+                            tint = LocalVibeColors.current.textPrimary
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = VibeColors.SurfaceDeep,
-                    titleContentColor = VibeColors.TextPrimary
+                    containerColor = LocalVibeColors.current.surface,
+                    titleContentColor = LocalVibeColors.current.textPrimary
                 )
             )
         },
-        containerColor = VibeColors.BackgroundDark
+        containerColor = LocalVibeColors.current.background
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(VibeColors.BackgroundDark)
+                .background(LocalVibeColors.current.background)
         ) {
             // Toolbar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(VibeColors.SurfaceDeep)
+                    .background(LocalVibeColors.current.surface)
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -301,7 +303,7 @@ fun CanvasScreen(
                         .size(36.dp)
                         .clip(CircleShape)
                         .background(Color(state.selectedColor))
-                        .border(2.dp, VibeColors.BorderStandard, CircleShape)
+                        .border(2.dp, LocalVibeColors.current.borderStandard, CircleShape)
                         .clickable { 
                             showColorPicker = !showColorPicker 
                             showBackgroundPicker = false
@@ -312,7 +314,7 @@ fun CanvasScreen(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(16.dp))
-                        .background(VibeColors.BackgroundDark.copy(alpha = 0.5f))
+                        .background(LocalVibeColors.current.background.copy(alpha = 0.5f))
                         .padding(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -327,7 +329,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Pen",
-                            tint = if (!state.isEraser && !state.isHighlighter) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            tint = if (!state.isEraser && !state.isHighlighter) LocalVibeColors.current.brand else LocalVibeColors.current.textMuted,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -339,7 +341,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Default.LayersClear, // Or similar for eraser
                             contentDescription = "Eraser",
-                            tint = if (state.isEraser) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            tint = if (state.isEraser) LocalVibeColors.current.brand else LocalVibeColors.current.textMuted,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -348,7 +350,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Default.BorderColor,
                             contentDescription = "Highlighter",
-                            tint = if (state.isHighlighter) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            tint = if (state.isHighlighter) LocalVibeColors.current.brand else LocalVibeColors.current.textMuted,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -367,7 +369,7 @@ fun CanvasScreen(
                         Icon(
                             Icons.Default.GridOn,
                             contentDescription = "Canvas background",
-                            tint = if (state.canvasBackground != com.vibenote.app.domain.model.CanvasBackground.DARK) VibeColors.BrandGreen else VibeColors.TextMuted
+                            tint = if (state.canvasBackground != com.vibenote.app.domain.model.CanvasBackground.DARK) LocalVibeColors.current.brand else LocalVibeColors.current.textMuted
                         )
                     }
                 }
@@ -378,7 +380,7 @@ fun CanvasScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(VibeColors.SurfaceDeep)
+                        .background(LocalVibeColors.current.surface)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -399,7 +401,7 @@ fun CanvasScreen(
                                 .background(Color(color))
                                 .border(
                                     if (state.selectedColor == color) 3.dp else 1.dp,
-                                    if (state.selectedColor == color) VibeColors.BrandGreen else VibeColors.BorderStandard,
+                                    if (state.selectedColor == color) LocalVibeColors.current.brand else LocalVibeColors.current.borderStandard,
                                     CircleShape
                                 )
                                 .clickable {
@@ -416,7 +418,7 @@ fun CanvasScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(VibeColors.SurfaceDeep)
+                        .background(LocalVibeColors.current.surface)
                         .padding(horizontal = 12.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -443,24 +445,24 @@ fun CanvasScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(VibeColors.SurfaceDeep)
+                    .background(LocalVibeColors.current.surface)
                     .padding(horizontal = 12.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Size", color = VibeColors.TextMuted, modifier = Modifier.width(40.dp))
+                Text("Size", color = LocalVibeColors.current.textMuted, modifier = Modifier.width(40.dp))
                 Slider(
                     value = state.strokeWidth,
                     onValueChange = { viewModel.setStrokeWidth(it) },
                     valueRange = 2f..20f,
                     modifier = Modifier.weight(1f),
                     colors = SliderDefaults.colors(
-                        thumbColor = VibeColors.BrandGreen,
-                        activeTrackColor = VibeColors.BrandGreen
+                        thumbColor = LocalVibeColors.current.brand,
+                        activeTrackColor = LocalVibeColors.current.brand
                     )
                 )
                 Text(
                     "${state.strokeWidth.toInt()}",
-                    color = VibeColors.TextMuted,
+                    color = LocalVibeColors.current.textMuted,
                     modifier = Modifier.width(30.dp)
                 )
             }
@@ -474,7 +476,7 @@ Box(
     if (state.isLoading) {
         CircularProgressIndicator(
             modifier = Modifier.align(Alignment.Center),
-            color = VibeColors.BrandGreen
+            color = LocalVibeColors.current.brand
         )
     }
 
@@ -565,6 +567,7 @@ Box(
                             }
                         }
                 ) {
+                    val themeBgColor = LocalVibeColors.current.background
                     androidx.compose.foundation.Canvas(
                         modifier = Modifier
                             .fillMaxSize()
@@ -635,7 +638,7 @@ Box(
                         
                         val bgColor = when (state.canvasBackground) {
                             CanvasBackground.WHITE -> Color.White
-                            else -> VibeColors.BackgroundDark
+                            else -> themeBgColor
                         }
                         
                         state.strokes.forEach { stroke ->
@@ -729,17 +732,17 @@ Box(
         var editedTitle by remember { mutableStateOf(state.noteTitle) }
         AlertDialog(
             onDismissRequest = { showEditTitleDialog = false },
-            title = { Text("Edit Title", color = VibeColors.TextPrimary) },
+            title = { Text("Edit Title", color = LocalVibeColors.current.textPrimary) },
             text = {
                 OutlinedTextField(
                     value = editedTitle,
                     onValueChange = { editedTitle = it },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = VibeColors.TextPrimary,
-                        unfocusedTextColor = VibeColors.TextPrimary,
-                        focusedBorderColor = VibeColors.BrandGreen,
-                        unfocusedBorderColor = VibeColors.BorderStandard
+                        focusedTextColor = LocalVibeColors.current.textPrimary,
+                        unfocusedTextColor = LocalVibeColors.current.textPrimary,
+                        focusedBorderColor = LocalVibeColors.current.brand,
+                        unfocusedBorderColor = LocalVibeColors.current.borderStandard
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -749,15 +752,15 @@ Box(
                     viewModel.updateTitle(editedTitle.ifBlank { "Untitled" })
                     showEditTitleDialog = false
                 }) {
-                    Text("Save", color = VibeColors.BrandGreen)
+                    Text("Save", color = LocalVibeColors.current.brand)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showEditTitleDialog = false }) {
-                    Text("Cancel", color = VibeColors.TextMuted)
+                    Text("Cancel", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = VibeColors.BackgroundDark
+            containerColor = LocalVibeColors.current.background
         )
     }
 
@@ -765,8 +768,8 @@ Box(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Note", color = VibeColors.TextPrimary) },
-            text = { Text("Are you sure you want to delete this note?", color = VibeColors.TextMuted) },
+            title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Are you sure you want to delete this note?", color = LocalVibeColors.current.textMuted) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteNote { onNavigateBack() }
@@ -777,10 +780,10 @@ Box(
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel", color = VibeColors.TextMuted)
+                    Text("Cancel", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = VibeColors.BackgroundDark
+            containerColor = LocalVibeColors.current.background
         )
     }
 
@@ -788,8 +791,8 @@ Box(
     if (showClearDialog) {
         AlertDialog(
             onDismissRequest = { showClearDialog = false },
-            title = { Text("Clear Canvas", color = VibeColors.TextPrimary) },
-            text = { Text("Remove all strokes? This can be undone.", color = VibeColors.TextMuted) },
+            title = { Text("Clear Canvas", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Remove all strokes? This can be undone.", color = LocalVibeColors.current.textMuted) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.clearCanvas()
@@ -800,10 +803,10 @@ Box(
             },
             dismissButton = {
                 TextButton(onClick = { showClearDialog = false }) {
-                    Text("Cancel", color = VibeColors.TextMuted)
+                    Text("Cancel", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = VibeColors.BackgroundDark
+            containerColor = LocalVibeColors.current.background
         )
     }
 
@@ -814,8 +817,8 @@ Box(
                 showExportDialog = false
                 exportedUri = null
             },
-            title = { Text("Export Successful", color = VibeColors.TextPrimary) },
-            text = { Text("Note exported to Pictures/VibeNote", color = VibeColors.TextMuted) },
+            title = { Text("Export Successful", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Note exported to Pictures/VibeNote", color = LocalVibeColors.current.textMuted) },
             confirmButton = {
                 TextButton(onClick = {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -827,7 +830,7 @@ Box(
                     showExportDialog = false
                     exportedUri = null
                 }) {
-                    Text("Share", color = VibeColors.BrandGreen)
+                    Text("Share", color = LocalVibeColors.current.brand)
                 }
             },
             dismissButton = {
@@ -835,10 +838,10 @@ Box(
                     showExportDialog = false
                     exportedUri = null
                 }) {
-                    Text("Close", color = VibeColors.TextMuted)
+                    Text("Close", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = VibeColors.BackgroundDark
+            containerColor = LocalVibeColors.current.background
         )
     }
 }

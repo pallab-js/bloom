@@ -5,6 +5,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.vibenote.app.core.theme.LocalVibeColors
 
 val VibeTypography = Typography(
     displayLarge = TextStyle(

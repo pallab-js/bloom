@@ -120,6 +120,31 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    fun toggleSelection(noteId: String) {
+        _selectedNoteIds.value = _selectedNoteIds.value.toMutableSet().apply {
+            if (contains(noteId)) remove(noteId) else add(noteId)
+        }
+    }
+
+    fun clearSelection() {
+        _selectedNoteIds.value = emptySet()
+    }
+
+    fun deleteSelectedNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentNotes = notes.value
+            val toDelete = currentNotes.filter { it.id in _selectedNoteIds.value }
+            toDelete.forEach { note ->
+                noteRepository.deleteNote(note)
+                val strokesFile = File(context.filesDir, "strokes_${note.id}.json")
+                if (strokesFile.exists()) {
+                    strokesFile.delete()
+                }
+            }
+            _selectedNoteIds.value = emptySet()
+        }
+    }
+
     fun filterByTag(tag: String) {
         _filter.value = FilterType.Tag(tag)
     }

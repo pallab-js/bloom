@@ -150,6 +150,10 @@ fun DashboardScreen(
                         }) {
                             Text("Cancel", color = LocalVibeColors.current.textMuted)
                         }
+                    } else {
+                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
+                            Icon(androidx.compose.material.icons.Icons.Default.Menu, contentDescription = "Menu", tint = LocalVibeColors.current.textPrimary)
+                        }
                     }
                 },
                 actions = {
@@ -406,6 +410,7 @@ title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
         }
     }
 }
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -461,6 +466,48 @@ fun NoteCard(
             )
             Text(
                 text = formatDate(note.updatedAt),
+                fontSize = 11.sp,
+                color = LocalVibeColors.current.textMuted,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+private fun formatDate(timestamp: Long): String {
+    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    return sdf.format(Date(timestamp))
+}= formatDate(note.updatedAt),
+                fontSize = 11.sp,
+                color = LocalVibeColors.current.textMuted,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+private fun formatDate(timestamp: Long): String {
+    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    return sdf.format(Date(timestamp))
+}               fontWeight = FontWeight.Medium,
+                color = LocalVibeColors.current.textPrimary,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
+            Text(
+                text = formatDate(note.updatedAt),
+                fontSize = 11.sp,
+                color = LocalVibeColors.current.textMuted,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+private fun formatDate(timestamp: Long): String {
+    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+    return sdf.format(Date(timestamp))
+}= formatDate(note.updatedAt),
                 fontSize = 11.sp,
                 color = LocalVibeColors.current.textMuted,
                 modifier = Modifier.padding(top = 4.dp)

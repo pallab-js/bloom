@@ -27,7 +27,9 @@ object DatabaseModule {
             context,
             NoteDatabase::class.java,
             "vibenote.db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides

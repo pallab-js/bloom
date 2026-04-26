@@ -32,7 +32,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class BloomActivity : ComponentActivity() {
 
     @Inject
     lateinit var noteRepository: NoteRepository

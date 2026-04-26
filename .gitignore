@@ -30,3 +30,6 @@ Thumbs.db
 
 # Schema exports
 app/schemas/
+
+# Worktrees
+.worktrees/

@@ -295,7 +295,7 @@ int style TextAppearance_Compat_Notification_Info 0x7f0c0004
 int style TextAppearance_Compat_Notification_Line2 0x7f0c0005
 int style TextAppearance_Compat_Notification_Time 0x7f0c0006
 int style TextAppearance_Compat_Notification_Title 0x7f0c0007
-int style Theme_VibeNote 0x7f0c0008
+int style Theme_Bloom 0x7f0c0008
 int style Widget_Compat_NotificationActionContainer 0x7f0c0009
 int style Widget_Compat_NotificationActionText 0x7f0c000a
 int[] styleable ActivityNavigator { 0x01010003, 0x7f030000, 0x7f030003, 0x7f030004, 0x7f030024 }

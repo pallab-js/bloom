@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vibenote.app"
+    package="com.bloom.app"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -13,25 +13,25 @@
         android:maxSdkVersion="28" />
 
     <permission
-        android:name="com.vibenote.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:name="com.bloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.vibenote.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+    <uses-permission android:name="com.bloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
-        android:name="com.vibenote.app.VibeNoteApplication"
+        android:name="com.vibenote.app.BloomApplication"
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="VibeNote"
+        android:label="Bloom"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VibeNote" >
+        android:theme="@style/Theme.Bloom" >
         <activity
-            android:name="com.vibenote.app.presentation.MainActivity"
+            android:name="com.vibenote.app.presentation.BloomActivity"
             android:exported="true"
-            android:theme="@style/Theme.VibeNote" >
+            android:theme="@style/Theme.Bloom" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +47,7 @@
 
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.vibenote.app.androidx-startup"
+            android:authorities="com.bloom.app.androidx-startup"
             android:exported="false" >
             <meta-data
                 android:name="androidx.emoji2.text.EmojiCompatInitializer"

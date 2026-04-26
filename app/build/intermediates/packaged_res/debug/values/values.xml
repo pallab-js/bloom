@@ -8,7 +8,7 @@
     <color name="surface_deep">#FF0F0F0F</color>
     <color name="text_muted">#FF898989</color>
     <color name="text_primary">#FFFAFAFA</color>
-    <style name="Theme.VibeNote" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.Bloom" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/background_dark</item>
         <item name="android:statusBarColor">@color/background_dark</item>
         <item name="android:navigationBarColor">@color/background_dark</item>

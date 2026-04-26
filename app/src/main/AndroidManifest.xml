@@ -5,16 +5,16 @@
         android:maxSdkVersion="28" />
 
     <application
-        android:name=".VibeNoteApplication"
+        android:name=".BloomApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="VibeNote"
+        android:label="Bloom"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VibeNote">
+        android:theme="@style/Theme.Bloom">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".presentation.BloomActivity"
             android:exported="true"
-            android:theme="@style/Theme.VibeNote">
+            android:theme="@style/Theme.Bloom">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

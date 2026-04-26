@@ -111,23 +111,23 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/pallabpc/.gradle/cac
 	android:supportsRtl
 		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:12:9-35
 	android:label
-		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:11:9-33
+		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:11:9-30
 	android:icon
 		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:10:9-43
 	android:allowBackup
 		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:9:9-35
 	android:theme
-		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:13:9-46
+		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:13:9-43
 	android:name
-		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:8:9-44
-activity#com.vibenote.app.presentation.MainActivity
+		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:8:9-41
+activity#com.vibenote.app.presentation.BloomActivity
 ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:14:9-22:20
 	android:exported
 		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:16:13-36
 	android:theme
-		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:17:13-50
+		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:17:13-47
 	android:name
-		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:15:13-54
+		ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:15:13-55
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
 ADDED from /Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:18:13-21:29
 action#android.intent.action.MAIN
@@ -322,7 +322,7 @@ ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms
 		ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
 	android:name
 		ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
-permission#com.vibenote.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+permission#com.bloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
 	android:protectionLevel
 		ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
@@ -332,7 +332,7 @@ uses-permission#${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
-uses-permission#com.vibenote.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission#com.bloom.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
 ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
 	android:name
 		ADDED from [androidx.core:core:1.12.0] /Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/AndroidManifest.xml:26:22-94

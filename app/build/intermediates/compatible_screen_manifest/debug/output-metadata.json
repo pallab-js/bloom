@@ -4,7 +4,7 @@
     "type": "COMPATIBLE_SCREEN_MANIFEST",
     "kind": "Directory"
   },
-  "applicationId": "com.vibenote.app",
+  "applicationId": "com.bloom.app",
   "variantName": "debug",
   "elements": []
 }

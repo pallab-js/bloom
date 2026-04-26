@@ -1,7 +1,7 @@
-# VibeNote
+# Bloom
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pallab-js/vibenote/master/samurai.png" width="120" alt="VibeNote Logo"/>
+  <img src="https://raw.githubusercontent.com/pallab-js/bloom/master/.github/icon.png" width="120" alt="Bloom Logo"/>
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@
 - **Note Actions** - Long-press for quick actions (favorite, duplicate, delete)
 
 ### Export & Share
-- **PNG Export** - Save notes as images to Pictures/VibeNote
+- **PNG Export** - Save notes as images to Pictures/Bloom
 - **Share Sheet** - Share via Android share intent
 
 ---
@@ -71,7 +71,7 @@ app/src/main/java/com/vibenote/app/
 └── presentation/
     ├── canvas/      # Canvas screen + ViewModel + Shape recognition
     ├── dashboard/   # Dashboard screen + ViewModel
-    └── MainActivity.kt
+    └── BloomActivity.kt
 ```
 
 ---

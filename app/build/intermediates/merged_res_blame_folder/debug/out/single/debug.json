@@ -4,6 +4,10 @@
         "source": "com.vibenote.app-main-62:/mipmap-mdpi/ic_launcher.png"
     },
     {
+        "merged": "com.vibenote.app-merged_res-60:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.vibenote.app-main-62:/drawable/ic_launcher_foreground.xml"
+    },
+    {
         "merged": "com.vibenote.app-merged_res-60:/mipmap-hdpi_ic_launcher.png.flat",
         "source": "com.vibenote.app-main-62:/mipmap-hdpi/ic_launcher.png"
     },
@@ -22,10 +26,6 @@
     {
         "merged": "com.vibenote.app-merged_res-60:/mipmap-xxxhdpi_ic_launcher.png.flat",
         "source": "com.vibenote.app-main-62:/mipmap-xxxhdpi/ic_launcher.png"
-    },
-    {
-        "merged": "com.vibenote.app-merged_res-60:/drawable_ic_launcher_foreground.png.flat",
-        "source": "com.vibenote.app-main-62:/drawable/ic_launcher_foreground.png"
     },
     {
         "merged": "com.vibenote.app-merged_res-60:/mipmap-xhdpi_ic_launcher.png.flat",

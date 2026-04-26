@@ -58,6 +58,20 @@ class NoteRepositoryImpl @Inject constructor(
         noteDao.updateTimestamp(id, timestamp)
     }
 
+    override fun getAllFolders(): Flow<List<Folder>> {
+        return folderDao.getAllFolders().map { entities ->
+            entities.map { it.toFolder() }
+        }
+    }
+
+    override suspend fun insertFolder(folder: Folder) {
+        folderDao.insertFolder(folder.toEntity())
+    }
+
+    override suspend fun deleteFolder(folder: Folder) {
+        folderDao.deleteFolder(folder.toEntity())
+    }
+
     private fun NoteEntity.toNote() = Note(
         id = id,
         title = title,
@@ -67,7 +81,10 @@ class NoteRepositoryImpl @Inject constructor(
         isFavorite = isFavorite,
         tags = if (tags.isBlank()) emptyList() else tags.split("|").filter { it.isNotBlank() },
         folder = folder,
-        canvasBackground = canvasBackground
+        canvasBackground = canvasBackground,
+        folderId = folderId,
+        sourceUri = sourceUri,
+        contentJson = contentJson
     )
 
     private fun Note.toEntity() = NoteEntity(
@@ -79,6 +96,23 @@ class NoteRepositoryImpl @Inject constructor(
         isFavorite = isFavorite,
         tags = tags.joinToString("|"),
         folder = folder,
-        canvasBackground = canvasBackground
+        canvasBackground = canvasBackground,
+        folderId = folderId,
+        sourceUri = sourceUri,
+        contentJson = contentJson
+    )
+
+    private fun FolderEntity.toFolder() = Folder(
+        id = id,
+        name = name,
+        parentId = parentId,
+        createdAt = createdAt
+    )
+
+    private fun Folder.toEntity() = FolderEntity(
+        id = id,
+        name = name,
+        parentId = parentId,
+        createdAt = createdAt
     )
 }

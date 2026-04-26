@@ -1,6 +1,7 @@
 package com.vibenote.app.domain.repository
 
 import com.vibenote.app.domain.model.Note
+import com.vibenote.app.domain.model.Folder
 import kotlinx.coroutines.flow.Flow
 
 interface NoteRepository {
@@ -13,4 +14,8 @@ interface NoteRepository {
     suspend fun deleteNote(note: Note)
     suspend fun getNoteById(id: String): Note?
     suspend fun updateNoteTimestamp(id: String, timestamp: Long)
+
+    fun getAllFolders(): Flow<List<Folder>>
+    suspend fun insertFolder(folder: Folder)
+    suspend fun deleteFolder(folder: Folder)
 }

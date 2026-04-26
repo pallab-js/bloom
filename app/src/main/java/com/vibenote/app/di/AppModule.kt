@@ -33,6 +33,26 @@ object DatabaseModule {
             "vibenote.db"
         )
             .addMigrations(NoteDatabase.MIGRATION_1_2, NoteDatabase.MIGRATION_2_3, NoteDatabase.MIGRATION_3_4)
+            .addCallback(object : androidx.room.RoomDatabase.Callback() {
+                override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    val id = java.util.UUID.randomUUID().toString()
+                    val now = System.currentTimeMillis()
+                    db.execSQL(
+                        "INSERT INTO notes (id, title, createdAt, updatedAt, strokeDataPath, isFavorite, tags, folder, canvasBackground) " +
+                        "VALUES ('$id', 'Welcome to Bloom 🌸', $now, $now, '', 0, 'tutorial', '', 'dark')"
+                    )
+                    
+                    // Seed strokes file
+                    try {
+                        val file = java.io.File(context.filesDir, "strokes_$id.json")
+                        val welcomeStrokes = "[{\"points\":\"400.0,400.0;600.0,600.0\",\"colorValue\":-16711936,\"strokeWidth\":8.0,\"isEraser\":false,\"isHighlighter\":false,\"strokeType\":\"CIRCLE\"}]"
+                        java.io.FileOutputStream(file).use { it.write(welcomeStrokes.toByteArray()) }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            })
             .build()
     }
 

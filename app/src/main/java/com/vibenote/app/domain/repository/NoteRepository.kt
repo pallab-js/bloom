@@ -12,4 +12,5 @@ interface NoteRepository {
     suspend fun updateNote(note: Note)
     suspend fun deleteNote(note: Note)
     suspend fun getNoteById(id: String): Note?
+    suspend fun updateNoteTimestamp(id: String, timestamp: Long)
 }

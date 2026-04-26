@@ -8,8 +8,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.calculatePan
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,15 +22,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.BorderColor
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.LayersClear
 import androidx.compose.material.icons.filled.Redo
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -48,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,14 +65,19 @@ import androidx.compose.ui.graphics.drawscope.Stroke as DrawStroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vibenote.app.core.theme.VibeColors
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.vibenote.app.domain.model.CanvasBackground
 import com.vibenote.app.domain.model.Stroke
 import com.vibenote.app.domain.model.StrokeType
 import kotlin.math.hypot
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 fun List<Offset>.toSmoothedPath(): Path {
     val path = Path()
@@ -81,6 +90,61 @@ fun List<Offset>.toSmoothedPath(): Path {
     }
     path.lineTo(last().x, last().y)
     return path
+}
+
+@Composable
+fun BackgroundSwatch(type: CanvasBackground, isSelected: Boolean, onClick: () -> Unit) {
+    val borderColor = if (isSelected) VibeColors.BrandGreen else VibeColors.BorderStandard
+    val borderWidth = if (isSelected) 3.dp else 1.dp
+
+    Box(
+        modifier = Modifier
+            .size(36.dp)
+            .clip(CircleShape)
+            .border(borderWidth, borderColor, CircleShape)
+            .clickable(onClick = onClick)
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            when (type) {
+                CanvasBackground.DARK -> drawRect(Color(0xFF171717))
+                CanvasBackground.WHITE -> drawRect(Color.White)
+                CanvasBackground.LINED -> {
+                    drawRect(Color(0xFF171717))
+                    for (y in 0..size.height.toInt() step 8) {
+                        drawLine(Color(0xFF2E2E2E), Offset(0f, y.toFloat()), Offset(size.width, y.toFloat()), 1f)
+                    }
+                }
+                CanvasBackground.DOTTED -> {
+                    drawRect(Color(0xFF171717))
+                    for (y in 0..size.height.toInt() step 8)
+                        for (x in 0..size.width.toInt() step 8)
+                            drawCircle(Color(0xFF2E2E2E), 1f, Offset(x.toFloat(), y.toFloat()))
+                }
+                CanvasBackground.GRID -> {
+                    drawRect(Color(0xFF171717))
+                    for (v in 0..size.height.toInt() step 8)
+                        drawLine(Color(0xFF2E2E2E), Offset(0f, v.toFloat()), Offset(size.width, v.toFloat()), 1f)
+                    for (h in 0..size.width.toInt() step 8)
+                        drawLine(Color(0xFF2E2E2E), Offset(h.toFloat(), 0f), Offset(h.toFloat(), size.height), 1f)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ToolButton(label: String, isActive: Boolean, onClick: () -> Unit) {
+    val bgColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.15f) else Color.Transparent
+    val textColor = if (isActive) VibeColors.BrandGreen else VibeColors.TextMuted
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(bgColor)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(label, color = textColor, fontSize = 13.sp)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,11 +161,13 @@ fun CanvasScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     var currentPath by remember { mutableStateOf(Path()) }
     var currentPoints by remember { mutableStateOf(listOf<Offset>()) }
     var showColorPicker by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showClearDialog by remember { mutableStateOf(false) }
     var showEditTitleDialog by remember { mutableStateOf(false) }
     var showBackgroundPicker by remember { mutableStateOf(false) }
     var showExportDialog by remember { mutableStateOf(false) }
@@ -130,8 +196,10 @@ fun CanvasScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        viewModel.saveNow()
-                        onNavigateBack()
+                        coroutineScope.launch {
+                            viewModel.saveNow()
+                            onNavigateBack()
+                        }
                     }) {
                         Icon(
                             Icons.Filled.ArrowBack,
@@ -164,6 +232,13 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.ZoomOutMap,
                             contentDescription = "Reset zoom",
+                            tint = VibeColors.TextPrimary
+                        )
+                    }
+                    IconButton(onClick = { showClearDialog = true }) {
+                        Icon(
+                            Icons.Filled.LayersClear,
+                            contentDescription = "Clear canvas",
                             tint = VibeColors.TextPrimary
                         )
                     }
@@ -221,30 +296,33 @@ fun CanvasScreen(
                 )
 
                 // Tool toggles
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    TextButton(onClick = { viewModel.toggleEraser() }) {
-                        Text(
-                            text = "Eraser",
-                            color = if (state.isEraser) VibeColors.BrandGreen else VibeColors.TextMuted
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ToolButton(
+                        label = "Eraser",
+                        isActive = state.isEraser,
+                        onClick = { viewModel.toggleEraser() }
+                    )
+                    IconButton(onClick = { viewModel.toggleHighlighter() }) {
+                        Icon(
+                            Icons.Default.BorderColor,
+                            contentDescription = "Highlighter",
+                            tint = if (state.isHighlighter) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
-                    TextButton(onClick = { viewModel.toggleHighlighter() }) {
-                        Text(
-                            text = "HL",
-                            color = if (state.isHighlighter) VibeColors.BrandGreen else VibeColors.TextMuted
-                        )
-                    }
-                    TextButton(onClick = { viewModel.toggleShapeMode() }) {
-                        Text(
-                            text = "Shape",
-                            color = if (state.isShapeMode) VibeColors.BrandGreen else VibeColors.TextMuted
-                        )
-                    }
+                    ToolButton(
+                        label = "Shape",
+                        isActive = state.isShapeMode,
+                        onClick = { viewModel.toggleShapeMode() }
+                    )
                     IconButton(onClick = { showBackgroundPicker = !showBackgroundPicker }) {
                         Icon(
                             Icons.Default.GridOn,
                             contentDescription = "Canvas background",
-                            tint = if (state.canvasBackground != "dark") VibeColors.BrandGreen else VibeColors.TextMuted
+                            tint = if (state.canvasBackground != CanvasBackground.DARK) VibeColors.BrandGreen else VibeColors.TextMuted
                         )
                     }
                 }
@@ -298,26 +376,19 @@ fun CanvasScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     listOf(
-                        "dark" to VibeColors.BackgroundDark,
-                        "white" to Color.White,
-                        "lined" to VibeColors.SurfaceDeep,
-                        "dotted" to VibeColors.SurfaceDeep,
-                        "grid" to VibeColors.SurfaceDeep
-                    ).forEach { (type, color) ->
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(color)
-                                .border(
-                                    if (state.canvasBackground == type) 3.dp else 1.dp,
-                                    if (state.canvasBackground == type) VibeColors.BrandGreen else VibeColors.BorderStandard,
-                                    CircleShape
-                                )
-                                .clickable {
-                                    viewModel.setCanvasBackground(type)
-                                    showBackgroundPicker = false
-                                }
+                        CanvasBackground.DARK,
+                        CanvasBackground.WHITE,
+                        CanvasBackground.LINED,
+                        CanvasBackground.DOTTED,
+                        CanvasBackground.GRID
+                    ).forEach { type ->
+                        BackgroundSwatch(
+                            type = type,
+                            isSelected = state.canvasBackground == type,
+                            onClick = {
+                                viewModel.setCanvasBackground(type)
+                                showBackgroundPicker = false
+                            }
                         )
                     }
                 }
@@ -350,60 +421,93 @@ fun CanvasScreen(
             }
 
 // Canvas with gestures
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .pointerInput(Unit) {
-                            detectTransformGestures { _, pan, zoom, _ ->
-                                canvasScale = (canvasScale * zoom).coerceIn(0.5f, 3f)
-                                canvasOffsetX += pan.x
-                                canvasOffsetY += pan.y
-                                viewModel.updateTransform(canvasScale, canvasOffsetX, canvasOffsetY)
-                            }
-                        }
-                        .pointerInput(Unit) {
-                            detectDragGestures(
-                                onDragStart = { offset ->
-                                    if (currentPoints.isNotEmpty()) return@detectDragGestures
-                                    currentPath = Path().apply { moveTo(offset.x, offset.y) }
-                                    currentPoints = listOf(offset)
-                                    val newStroke = Stroke(
-                                        colorValue = state.selectedColor,
-                                        strokeWidth = state.strokeWidth,
-                                        isEraser = state.isEraser,
-                                        isHighlighter = state.isHighlighter
-                                    )
-                                    viewModel.startStroke(newStroke)
-                                },
-                                onDrag = { change, _ ->
-                                    currentPath.lineTo(change.position.x, change.position.y)
-                                    currentPoints = currentPoints + change.position
-                                },
-                                onDragEnd = {
-                                    val pointString = currentPoints.joinToString(";") { "${it.x},${it.y}" }
-                                    
-                                    if (state.isShapeMode && currentPoints.size >= 5) {
-                                        val shapeStroke = viewModel.applyShapeRecognition(currentPoints)
-                                        if (shapeStroke != null) {
-                                            viewModel.startStroke(shapeStroke.copy(points = pointString))
-                                            viewModel.finishStroke()
-                                            currentPath = Path()
-                                            currentPoints = emptyList()
-                                            return@detectDragGestures
-                                        }
+Box(
+    modifier = Modifier
+        .fillMaxSize()
+        .weight(1f)
+) {
+    if (state.isLoading) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+            color = VibeColors.BrandGreen
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+
+                            awaitEachGesture {
+                                val down = awaitFirstDown()
+                                var isTransforming = false
+                                var points = listOf(down.position)
+                                
+                                val newStroke = Stroke(
+                                    colorValue = state.selectedColor,
+                                    strokeWidth = state.strokeWidth,
+                                    isEraser = state.isEraser,
+                                    isHighlighter = state.isHighlighter
+                                )
+                                viewModel.startStroke(newStroke)
+                                currentPoints = points
+                                currentPath = Path().apply { moveTo(down.position.x, down.position.y) }
+
+                                var wasCanceled = false
+                                do {
+                                    val event = awaitPointerEvent()
+                                    if (event.changes.any { it.isConsumed }) {
+                                        wasCanceled = true
+                                        break
                                     }
                                     
-                                    viewModel.updateStroke(pointString)
+                                    if (event.changes.size > 1) {
+                                        if (!isTransforming) {
+                                            isTransforming = true
+                                            currentPoints = emptyList()
+                                            currentPath = Path()
+                                        }
+                                    }
+
+                                    if (isTransforming) {
+                                        val zoomChange = event.calculateZoom()
+                                        val panChange = event.calculatePan()
+                                        
+                                        if (zoomChange != 1f || panChange != Offset.Zero) {
+                                            canvasScale = (canvasScale * zoomChange).coerceIn(0.5f, 3f)
+                                            canvasOffsetX += panChange.x
+                                            canvasOffsetY += panChange.y
+                                            viewModel.updateTransform(canvasScale, canvasOffsetX, canvasOffsetY)
+                                        }
+                                        event.changes.forEach { it.consume() }
+                                    } else {
+                                        val change = event.changes.first()
+                                        if (change.pressed) {
+                                            points = points + change.position
+                                            currentPoints = points
+                                            currentPath.lineTo(change.position.x, change.position.y)
+                                            change.consume()
+                                        }
+                                    }
+                                } while (event.changes.any { it.pressed })
+
+                                if (!wasCanceled && !isTransforming && points.size > 1) {
+                                    if (state.isShapeMode && points.size >= 5) {
+                                        val shapeStroke = viewModel.applyShapeRecognition(points)
+                                        if (shapeStroke != null) {
+                                            viewModel.startStroke(shapeStroke)
+                                        } else {
+                                            viewModel.updateStroke(points)
+                                        }
+                                    } else {
+                                        viewModel.updateStroke(points)
+                                    }
                                     viewModel.finishStroke()
-                                    currentPath = Path()
-                                    currentPoints = emptyList()
                                 }
-                            )
+                                
+                                currentPoints = emptyList()
+                                currentPath = Path()
+                            }
                         }
                 ) {
                     androidx.compose.foundation.Canvas(
@@ -417,8 +521,8 @@ fun CanvasScreen(
                             )
                     ) {
                         when (state.canvasBackground) {
-                            "white" -> drawRect(Color.White, size = size)
-                            "lined" -> {
+                            CanvasBackground.WHITE -> drawRect(Color.White, size = size)
+                            CanvasBackground.LINED -> {
                                 val spacing = 80f
                                 var y = 0f
                                 while (y < size.height) {
@@ -431,7 +535,7 @@ fun CanvasScreen(
                                     y += spacing
                                 }
                             }
-                            "dotted" -> {
+                            CanvasBackground.DOTTED -> {
                                 val spacing = 80f
                                 var x = 0f
                                 var y = 0f
@@ -448,7 +552,7 @@ fun CanvasScreen(
                                     y += spacing
                                 }
                             }
-                            "grid" -> {
+                            CanvasBackground.GRID -> {
                                 val spacing = 80f
                                 var x = 0f
                                 while (x < size.width) {
@@ -471,70 +575,71 @@ fun CanvasScreen(
                                     y += spacing
                                 }
                             }
+                            else -> {}
+                        }
+                        
+                        val bgColor = when (state.canvasBackground) {
+                            CanvasBackground.WHITE -> Color.White
+                            else -> VibeColors.BackgroundDark
                         }
                         
                         state.strokes.forEach { stroke ->
-                            if (stroke.points.isNotEmpty()) {
-                                val pointsList = stroke.points.split(";").mapNotNull { pair ->
-                                    val coords = pair.split(",")
-                                    if (coords.size == 2) Offset(coords[0].toFloat(), coords[1].toFloat()) else null
+                            val pointsList = stroke.points
+                            if (pointsList.size >= 2) {
+                                val strokeColor = when {
+                                    stroke.isEraser -> bgColor
+                                    stroke.isHighlighter -> Color(stroke.colorValue).copy(alpha = 0.4f)
+                                    else -> Color(stroke.colorValue)
                                 }
-                                if (pointsList.size >= 2) {
-                                    val strokeColor = when {
-                                        stroke.isEraser -> VibeColors.BackgroundDark
-                                        stroke.isHighlighter -> Color(stroke.colorValue).copy(alpha = 0.4f)
-                                        else -> Color(stroke.colorValue)
+                                val strokeWidth = if (stroke.isHighlighter) stroke.strokeWidth * 3 else stroke.strokeWidth
+                                
+                                when (stroke.strokeType) {
+                                    StrokeType.CIRCLE -> {
+                                        val center = pointsList.first()
+                                        val radius = hypot(
+                                            pointsList.last().x - center.x,
+                                            pointsList.last().y - center.y
+                                        )
+                                        drawCircle(
+                                            color = strokeColor,
+                                            radius = radius,
+                                            center = center,
+                                            style = DrawStroke(width = strokeWidth)
+                                        )
                                     }
-                                    val strokeWidth = if (stroke.isHighlighter) stroke.strokeWidth * 3 else stroke.strokeWidth
-                                    
-                                    when (stroke.strokeType) {
-                                        StrokeType.CIRCLE -> {
-                                            val center = pointsList.first()
-                                            val radius = hypot(
-                                                pointsList.last().x - center.x,
-                                                pointsList.last().y - center.y
+                                    StrokeType.RECTANGLE -> {
+                                        val topLeft = pointsList.first()
+                                        val bottomRight = pointsList.last()
+                                        drawRect(
+                                            color = strokeColor,
+                                            topLeft = topLeft,
+                                            size = androidx.compose.ui.geometry.Size(
+                                                bottomRight.x - topLeft.x,
+                                                bottomRight.y - topLeft.y
+                                            ),
+                                            style = DrawStroke(width = strokeWidth)
+                                        )
+                                    }
+                                    StrokeType.LINE -> {
+                                        drawLine(
+                                            color = strokeColor,
+                                            start = pointsList.first(),
+                                            end = pointsList.last(),
+                                            strokeWidth = strokeWidth,
+                                            cap = StrokeCap.Round
+                                        )
+                                    }
+                                    else -> {
+                                        val path = pointsList.toSmoothedPath()
+                                        drawPath(
+                                            path = path,
+                                            color = strokeColor,
+                                            style = DrawStroke(
+                                                width = strokeWidth,
+                                                cap = StrokeCap.Round,
+                                                join = StrokeJoin.Round
                                             )
-                                            drawCircle(
-                                                color = strokeColor,
-                                                radius = radius,
-                                                center = center,
-                                                style = DrawStroke(width = strokeWidth)
-                                            )
-                                        }
-                                        StrokeType.RECTANGLE -> {
-                                            val topLeft = pointsList.first()
-                                            val bottomRight = pointsList.last()
-                                            drawRect(
-                                                color = strokeColor,
-                                                topLeft = topLeft,
-                                                size = androidx.compose.ui.geometry.Size(
-                                                    bottomRight.x - topLeft.x,
-                                                    bottomRight.y - topLeft.y
-                                                ),
-                                                style = DrawStroke(width = strokeWidth)
-                                            )
-                                        }
-                                        StrokeType.LINE -> {
-                                            drawLine(
-                                                color = strokeColor,
-                                                start = pointsList.first(),
-                                                end = pointsList.last(),
-                                                strokeWidth = strokeWidth,
-                                                cap = StrokeCap.Round
-                                            )
-                                        }
-                                        else -> {
-                                            val path = pointsList.toSmoothedPath()
-                                            drawPath(
-                                                path = path,
-                                                color = strokeColor,
-                                                style = DrawStroke(
-                                                    width = strokeWidth,
-                                                    cap = StrokeCap.Round,
-                                                    join = StrokeJoin.Round
-                                                )
-                                            )
-                                        }
+                                        )
                                     }
                                 }
                             }
@@ -542,7 +647,7 @@ fun CanvasScreen(
 
                         if (currentPoints.isNotEmpty()) {
                             val renderColor = when {
-                                state.isEraser -> VibeColors.BackgroundDark
+                                state.isEraser -> bgColor
                                 state.isHighlighter -> Color(state.selectedColor).copy(alpha = 0.4f)
                                 else -> Color(state.selectedColor)
                             }
@@ -612,11 +717,34 @@ fun CanvasScreen(
                     viewModel.deleteNote { onNavigateBack() }
                     showDeleteDialog = false
                 }) {
-                    Text("Delete", color = VibeColors.BrandGreen)
+                    Text("Delete", color = Color(0xFFFF6B6B))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel", color = VibeColors.TextMuted)
+                }
+            },
+            containerColor = VibeColors.BackgroundDark
+        )
+    }
+
+    // Clear Canvas confirmation dialog
+    if (showClearDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearDialog = false },
+            title = { Text("Clear Canvas", color = VibeColors.TextPrimary) },
+            text = { Text("Remove all strokes? This can be undone.", color = VibeColors.TextMuted) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.clearCanvas()
+                    showClearDialog = false
+                }) {
+                    Text("Clear", color = Color(0xFFFF6B6B))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearDialog = false }) {
                     Text("Cancel", color = VibeColors.TextMuted)
                 }
             },

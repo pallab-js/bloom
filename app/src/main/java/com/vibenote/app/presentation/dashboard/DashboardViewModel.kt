@@ -1,23 +1,39 @@
 package com.vibenote.app.presentation.dashboard
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vibenote.app.domain.model.Note
 import com.vibenote.app.domain.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val noteRepository: NoteRepository
+    @ApplicationContext private val context: Context,
+    private val noteRepository: NoteRepository,
+    private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
+
+    companion object {
+        private val SORT_ORDER_KEY = stringPreferencesKey("sort_order")
+    }
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -27,6 +43,17 @@ class DashboardViewModel @Inject constructor(
 
     private val _sortOrder = MutableStateFlow(SortOrder.NEWEST_FIRST)
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            dataStore.data.map { preferences ->
+                val name = preferences[SORT_ORDER_KEY] ?: SortOrder.NEWEST_FIRST.name
+                try { SortOrder.valueOf(name) } catch (e: Exception) { SortOrder.NEWEST_FIRST }
+            }.collect { order ->
+                _sortOrder.value = order
+            }
+        }
+    }
 
     val notes: StateFlow<List<Note>> = combine(
         noteRepository.getAllNotes(),
@@ -65,7 +92,11 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun setSortOrder(order: SortOrder) {
-        _sortOrder.value = order
+        viewModelScope.launch {
+            dataStore.edit { preferences ->
+                preferences[SORT_ORDER_KEY] = order.name
+            }
+        }
     }
 
     fun filterByTag(tag: String) {
@@ -113,20 +144,30 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun deleteNote(note: Note) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             noteRepository.deleteNote(note)
+            val strokesFile = File(context.filesDir, "strokes_${note.id}.json")
+            if (strokesFile.exists()) {
+                strokesFile.delete()
+            }
         }
     }
 
     fun duplicateNote(note: Note) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val newId = UUID.randomUUID().toString()
             val copy = note.copy(
-                id = java.util.UUID.randomUUID().toString(),
+                id = newId,
                 title = "${note.title} (copy)",
                 createdAt = System.currentTimeMillis(),
                 updatedAt = System.currentTimeMillis()
             )
             noteRepository.insertNote(copy)
+            val src = File(context.filesDir, "strokes_${note.id}.json")
+            val dst = File(context.filesDir, "strokes_$newId.json")
+            if (src.exists()) {
+                src.copyTo(dst, overwrite = true)
+            }
         }
     }
 }

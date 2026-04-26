@@ -109,10 +109,11 @@ object ShapeRecognitionHelper {
         
         val first = points.first()
         val last = points.last()
+        val pathLength = calculatePathLength(points)
+        if (pathLength < 1f) return true
         
         for (point in points) {
             val distance = pointToLineDistance(point, first, last)
-            val pathLength = calculatePathLength(points)
             if (distance / pathLength > 0.15f) {
                 return false
             }
@@ -190,7 +191,7 @@ object ShapeRecognitionHelper {
         if (width < 20f || height < 20f) return null
         
         val aspectRatio = width / height
-        val isRectangular = aspectRatio > 0.5f && aspectRatio < 2f
+        val isRectangular = aspectRatio > 0.1f && aspectRatio < 10f
         
         if (!isRectangular) return null
         

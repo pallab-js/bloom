@@ -1,7 +1,9 @@
 package com.vibenote.app.domain.model
 
+import androidx.compose.ui.geometry.Offset
+
 data class Stroke(
-    val points: String = "",
+    val points: List<Offset> = emptyList(),
     val colorValue: Int = 0xFFFFFFFF.toInt(),
     val strokeWidth: Float = 4f,
     val isEraser: Boolean = false,

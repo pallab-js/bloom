@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.vibenote.app-mergeDebugResources-58:/values-fi/values-fi.xml",
+            "outputFile": "com.vibenote.app-mergeDebugResources-60:/values-fi/values-fi.xml",
             "map": [
                 {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/42ab2038a8c27fd7a07ea78949a8c194/transformed/jetified-ui-release/res/values-fi/values-fi.xml",

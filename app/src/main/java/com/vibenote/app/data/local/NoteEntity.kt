@@ -2,6 +2,7 @@ package com.vibenote.app.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.vibenote.app.domain.model.CanvasBackground
 
 @Entity(tableName = "notes")
 data class NoteEntity(
@@ -14,5 +15,5 @@ data class NoteEntity(
     val isFavorite: Boolean = false,
     val tags: String = "",
     val folder: String = "",
-    val canvasBackground: String = "dark"
+    val canvasBackground: CanvasBackground = CanvasBackground.DARK
 )

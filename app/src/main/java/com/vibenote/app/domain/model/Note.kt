@@ -11,5 +11,5 @@ data class Note(
     val isFavorite: Boolean = false,
     val tags: List<String> = emptyList(),
     val folder: String = "",
-    val canvasBackground: String = "dark"
+    val canvasBackground: CanvasBackground = CanvasBackground.DARK
 )

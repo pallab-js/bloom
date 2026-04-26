@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.vibenote.app-mergeDebugResources-58:/values/values.xml",
+            "outputFile": "com.vibenote.app-mergeDebugResources-60:/values/values.xml",
             "map": [
                 {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/3b6340bcb336127f669b8801e7937d76/transformed/navigation-runtime-2.7.5/res/values/values.xml",
@@ -76,6 +76,23 @@
                     }
                 },
                 {
+                    "source": "/Users/pallabpc/Desktop/bloom/app/src/main/res/values/colors.xml",
+                    "from": {
+                        "startLines": "6,2,9,5,3,4,8,7",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "263,55,408,215,107,166,361,312",
+                        "endColumns": "48,51,51,47,58,48,46,48",
+                        "endOffsets": "307,102,455,258,161,210,403,356"
+                    },
+                    "to": {
+                        "startLines": "3,6,7,8,11,14,15,16",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "210,419,471,523,702,893,942,989",
+                        "endColumns": "48,51,51,47,58,48,46,48",
+                        "endOffsets": "254,466,518,566,756,937,984,1033"
+                    }
+                },
+                {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/3e37ebf56d58ba51871ca0e42c4069c1/transformed/jetified-customview-poolingcontainer-1.0.0/res/values/values.xml",
                     "from": {
                         "startLines": "2,3",
@@ -90,23 +107,6 @@
                         "startOffsets": "4977,5154",
                         "endColumns": "53,66",
                         "endOffsets": "5026,5216"
-                    }
-                },
-                {
-                    "source": "/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/colors.xml",
-                    "from": {
-                        "startLines": "6,2,9,5,3,4,8,7",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "263,55,408,215,107,166,361,312",
-                        "endColumns": "48,51,51,47,58,48,46,48",
-                        "endOffsets": "307,102,455,258,161,210,403,356"
-                    },
-                    "to": {
-                        "startLines": "3,6,7,8,11,14,15,16",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "210,419,471,523,702,893,942,989",
-                        "endColumns": "48,51,51,47,58,48,46,48",
-                        "endOffsets": "254,466,518,566,756,937,984,1033"
                     }
                 },
                 {
@@ -182,6 +182,25 @@
                     }
                 },
                 {
+                    "source": "/Users/pallabpc/Desktop/bloom/app/src/main/res/values/themes.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "366"
+                    },
+                    "to": {
+                        "startLines": "217",
+                        "startColumns": "4",
+                        "startOffsets": "13506",
+                        "endLines": "221",
+                        "endColumns": "12",
+                        "endOffsets": "13817"
+                    }
+                },
+                {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/cb9f4987c1b5e16afc049a710cb67b6d/transformed/fragment-1.5.1/res/values/values.xml",
                     "from": {
                         "startLines": "2,3,4,5,10",
@@ -198,25 +217,6 @@
                         "endLines": "77,86,107,305,309",
                         "endColumns": "56,64,63,24,24",
                         "endOffsets": "4866,5323,6453,17346,17495"
-                    }
-                },
-                {
-                    "source": "/Users/pallabpc/Desktop/vibenote/app/src/main/res/values/themes.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endLines": "6",
-                        "endColumns": "12",
-                        "endOffsets": "366"
-                    },
-                    "to": {
-                        "startLines": "217",
-                        "startColumns": "4",
-                        "startOffsets": "13506",
-                        "endLines": "221",
-                        "endColumns": "12",
-                        "endOffsets": "13817"
                     }
                 },
                 {

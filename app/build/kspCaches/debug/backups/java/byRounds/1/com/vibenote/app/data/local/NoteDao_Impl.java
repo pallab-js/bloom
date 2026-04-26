@@ -9,9 +9,11 @@ import androidx.room.EntityDeletionOrUpdateAdapter;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
+import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.sqlite.db.SupportSQLiteStatement;
+import com.vibenote.app.domain.model.CanvasBackground;
 import java.lang.Class;
 import java.lang.Exception;
 import java.lang.Object;
@@ -34,9 +36,13 @@ public final class NoteDao_Impl implements NoteDao {
 
   private final EntityInsertionAdapter<NoteEntity> __insertionAdapterOfNoteEntity;
 
+  private final Converters __converters = new Converters();
+
   private final EntityDeletionOrUpdateAdapter<NoteEntity> __deletionAdapterOfNoteEntity;
 
   private final EntityDeletionOrUpdateAdapter<NoteEntity> __updateAdapterOfNoteEntity;
+
+  private final SharedSQLiteStatement __preparedStmtOfUpdateTimestamp;
 
   public NoteDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -59,7 +65,8 @@ public final class NoteDao_Impl implements NoteDao {
         statement.bindLong(6, _tmp);
         statement.bindString(7, entity.getTags());
         statement.bindString(8, entity.getFolder());
-        statement.bindString(9, entity.getCanvasBackground());
+        final String _tmp_1 = __converters.fromCanvasBackground(entity.getCanvasBackground());
+        statement.bindString(9, _tmp_1);
       }
     };
     this.__deletionAdapterOfNoteEntity = new EntityDeletionOrUpdateAdapter<NoteEntity>(__db) {
@@ -94,8 +101,17 @@ public final class NoteDao_Impl implements NoteDao {
         statement.bindLong(6, _tmp);
         statement.bindString(7, entity.getTags());
         statement.bindString(8, entity.getFolder());
-        statement.bindString(9, entity.getCanvasBackground());
+        final String _tmp_1 = __converters.fromCanvasBackground(entity.getCanvasBackground());
+        statement.bindString(9, _tmp_1);
         statement.bindString(10, entity.getId());
+      }
+    };
+    this.__preparedStmtOfUpdateTimestamp = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE notes SET updatedAt = ? WHERE id = ?";
+        return _query;
       }
     };
   }
@@ -155,6 +171,34 @@ public final class NoteDao_Impl implements NoteDao {
   }
 
   @Override
+  public Object updateTimestamp(final String id, final long timestamp,
+      final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfUpdateTimestamp.acquire();
+        int _argIndex = 1;
+        _stmt.bindLong(_argIndex, timestamp);
+        _argIndex = 2;
+        _stmt.bindString(_argIndex, id);
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfUpdateTimestamp.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
   public Flow<List<NoteEntity>> getAllNotes() {
     final String _sql = "SELECT * FROM notes ORDER BY createdAt DESC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
@@ -194,8 +238,10 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            final String _tmpCanvasBackground;
-            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            final CanvasBackground _tmpCanvasBackground;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _tmpCanvasBackground = __converters.toCanvasBackground(_tmp_1);
             _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
@@ -252,8 +298,10 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            final String _tmpCanvasBackground;
-            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            final CanvasBackground _tmpCanvasBackground;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _tmpCanvasBackground = __converters.toCanvasBackground(_tmp_1);
             _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
@@ -272,7 +320,7 @@ public final class NoteDao_Impl implements NoteDao {
 
   @Override
   public Flow<List<NoteEntity>> getNotesByTag(final String tag) {
-    final String _sql = "SELECT * FROM notes WHERE tags LIKE '%' || ? || '%' ORDER BY createdAt DESC";
+    final String _sql = "SELECT * FROM notes WHERE '|' || tags || '|' LIKE '%|' || ? || '|%' ORDER BY createdAt DESC";
     final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
     int _argIndex = 1;
     _statement.bindString(_argIndex, tag);
@@ -312,8 +360,10 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            final String _tmpCanvasBackground;
-            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            final CanvasBackground _tmpCanvasBackground;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _tmpCanvasBackground = __converters.toCanvasBackground(_tmp_1);
             _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
@@ -372,8 +422,10 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            final String _tmpCanvasBackground;
-            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            final CanvasBackground _tmpCanvasBackground;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _tmpCanvasBackground = __converters.toCanvasBackground(_tmp_1);
             _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
@@ -432,8 +484,10 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            final String _tmpCanvasBackground;
-            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            final CanvasBackground _tmpCanvasBackground;
+            final String _tmp_1;
+            _tmp_1 = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _tmpCanvasBackground = __converters.toCanvasBackground(_tmp_1);
             _result = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
           } else {
             _result = null;

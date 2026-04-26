@@ -20,10 +20,11 @@
 
     <application
         android:name="com.vibenote.app.BloomApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="Bloom"
         android:supportsRtl="true"

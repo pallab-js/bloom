@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.vibenote.app-mergeDebugResources-58:/values-pt-rBR/values-pt-rBR.xml",
+            "outputFile": "com.vibenote.app-mergeDebugResources-60:/values-pt-rBR/values-pt-rBR.xml",
             "map": [
                 {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/3c301bff3ebfe78494d59f5bb51e99f9/transformed/core-1.12.0/res/values-pt-rBR/values-pt-rBR.xml",

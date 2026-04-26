@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.vibenote.app-mergeDebugResources-58:/values-ko/values-ko.xml",
+            "outputFile": "com.vibenote.app-mergeDebugResources-60:/values-ko/values-ko.xml",
             "map": [
                 {
                     "source": "/Users/pallabpc/.gradle/caches/transforms-3/7c00d8f6a9045303280c6bff77e4e691/transformed/jetified-material3-1.1.2/res/values-ko/values-ko.xml",

@@ -54,6 +54,10 @@ class NoteRepositoryImpl @Inject constructor(
         return noteDao.getNoteById(id)?.toNote()
     }
 
+    override suspend fun updateNoteTimestamp(id: String, timestamp: Long) {
+        noteDao.updateTimestamp(id, timestamp)
+    }
+
     private fun NoteEntity.toNote() = Note(
         id = id,
         title = title,
@@ -61,7 +65,7 @@ class NoteRepositoryImpl @Inject constructor(
         updatedAt = updatedAt,
         strokeDataPath = strokeDataPath,
         isFavorite = isFavorite,
-        tags = if (tags.isBlank()) emptyList() else tags.split("\u001F").filter { it.isNotBlank() },
+        tags = if (tags.isBlank()) emptyList() else tags.split("|").filter { it.isNotBlank() },
         folder = folder,
         canvasBackground = canvasBackground
     )
@@ -73,7 +77,7 @@ class NoteRepositoryImpl @Inject constructor(
         updatedAt = updatedAt,
         strokeDataPath = strokeDataPath,
         isFavorite = isFavorite,
-        tags = tags.joinToString("\u001F"),
+        tags = tags.joinToString("|"),
         folder = folder,
         canvasBackground = canvasBackground
     )

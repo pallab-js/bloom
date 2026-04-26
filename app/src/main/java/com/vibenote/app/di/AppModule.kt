@@ -1,6 +1,10 @@
 package com.vibenote.app.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.vibenote.app.data.local.NoteDao
 import com.vibenote.app.data.local.NoteDatabase
@@ -36,6 +40,21 @@ object DatabaseModule {
     @Singleton
     fun provideNoteDao(database: NoteDatabase): NoteDao {
         return database.noteDao()
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("settings") }
+        )
     }
 }
 

@@ -16,7 +16,7 @@ interface NoteDao {
     @Query("SELECT * FROM notes WHERE isFavorite = 1 ORDER BY createdAt DESC")
     fun getFavoriteNotes(): Flow<List<NoteEntity>>
 
-    @Query("SELECT * FROM notes WHERE tags LIKE '%' || :tag || '%' ORDER BY createdAt DESC")
+    @Query("SELECT * FROM notes WHERE '|' || tags || '|' LIKE '%|' || :tag || '|%' ORDER BY createdAt DESC")
     fun getNotesByTag(tag: String): Flow<List<NoteEntity>>
 
     @Query("SELECT * FROM notes WHERE folder = :folder ORDER BY createdAt DESC")
@@ -33,4 +33,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM notes WHERE id = :id")
     suspend fun getNoteById(id: String): NoteEntity?
+
+    @Query("UPDATE notes SET updatedAt = :timestamp WHERE id = :id")
+    suspend fun updateTimestamp(id: String, timestamp: Long)
 }

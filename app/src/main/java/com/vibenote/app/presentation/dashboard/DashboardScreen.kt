@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +48,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -75,6 +79,9 @@ fun DashboardScreen(
     var selectedNote by remember { mutableStateOf<Note?>(null) }
     var showNoteActions by remember { mutableStateOf(false) }
 
+    val isSearchActive = searchQuery.isNotBlank()
+    val isEmpty = notes.isEmpty()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,7 +103,7 @@ fun DashboardScreen(
                     } else {
                         Column {
                             Text(
-                                text = "VIBENOTE",
+                                text = "Bloom",
                                 fontSize = 18.sp,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Medium,
@@ -200,7 +207,7 @@ fun DashboardScreen(
         },
         containerColor = VibeColors.BackgroundDark
     ) { padding ->
-        if (notes.isEmpty()) {
+        if (isEmpty) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -218,16 +225,18 @@ fun DashboardScreen(
                     )
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        "No notes yet",
+                        if (isSearchActive) "No notes match \"$searchQuery\"" else "No notes yet",
                         color = VibeColors.TextMuted,
                         fontSize = 16.sp
                     )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        "Tap + to create your first note",
-                        color = VibeColors.TextMuted,
-                        fontSize = 13.sp
-                    )
+                    if (!isSearchActive) {
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            "Tap + to create your first note",
+                            color = VibeColors.TextMuted,
+                            fontSize = 13.sp
+                        )
+                    }
                 }
             }
         } else {
@@ -258,14 +267,14 @@ items(notes) { note: Note ->
     noteToDelete?.let { note ->
         AlertDialog(
             onDismissRequest = { noteToDelete = null },
-            title = { Text("Delete Note", color = VibeColors.TextPrimary) },
+title = { Text("Delete Note", color = VibeColors.TextPrimary) },
             text = { Text("Delete \"${note.title}\"?", color = VibeColors.TextMuted) },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.deleteNote(note)
+                    viewModel.deleteNote(noteToDelete!!)
                     noteToDelete = null
                 }) {
-                    Text("Delete", color = VibeColors.BrandGreen)
+                    Text("Delete", color = Color(0xFFFF6B6B))
                 }
             },
             dismissButton = {
@@ -356,12 +365,16 @@ fun NoteCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
+    val haptic = LocalHapticFeedback.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = onLongClick
+                onLongClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongClick()
+                }
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(

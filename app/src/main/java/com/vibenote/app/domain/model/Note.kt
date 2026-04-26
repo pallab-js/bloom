@@ -8,6 +8,7 @@ data class Note(
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
     val strokeDataPath: String = "",
+    val strokes: List<Stroke> = emptyList(),
     val isFavorite: Boolean = false,
     val tags: List<String> = emptyList(),
     val folder: String = "",

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.vibenote.app.data.local.toDomain
 import com.vibenote.app.domain.model.Note
 import com.vibenote.app.domain.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,6 +56,8 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    private val gson = com.google.gson.Gson()
+
     val notes: StateFlow<List<Note>> = combine(
         noteRepository.getAllNotes(),
         _searchQuery,
@@ -70,12 +73,30 @@ class DashboardViewModel @Inject constructor(
         if (query.isNotBlank()) {
             filtered = filtered.filter { it.title.contains(query, ignoreCase = true) }
         }
+        
+        // Load strokes for each filtered note for preview
+        val notesWithStrokes = filtered.map { note ->
+            val strokesFile = File(context.filesDir, "strokes_${note.id}.json")
+            if (strokesFile.exists()) {
+                try {
+                    val json = strokesFile.readText()
+                    val type = object : com.google.gson.reflect.TypeToken<List<com.vibenote.app.data.local.StrokeDto>>() {}.type
+                    val dtos: List<com.vibenote.app.data.local.StrokeDto> = gson.fromJson(json, type) ?: emptyList()
+                    note.copy(strokes = dtos.map { it.toDomain() })
+                } catch (e: Exception) {
+                    note
+                }
+            } else {
+                note
+            }
+        }
+
         when (sort) {
-            SortOrder.NEWEST_FIRST -> filtered.sortedByDescending { it.createdAt }
-            SortOrder.OLDEST_FIRST -> filtered.sortedBy { it.createdAt }
-            SortOrder.LAST_MODIFIED -> filtered.sortedByDescending { it.updatedAt }
-            SortOrder.A_TO_Z -> filtered.sortedBy { it.title.lowercase() }
-            SortOrder.Z_TO_A -> filtered.sortedByDescending { it.title.lowercase() }
+            SortOrder.NEWEST_FIRST -> notesWithStrokes.sortedByDescending { it.createdAt }
+            SortOrder.OLDEST_FIRST -> notesWithStrokes.sortedBy { it.createdAt }
+            SortOrder.LAST_MODIFIED -> notesWithStrokes.sortedByDescending { it.updatedAt }
+            SortOrder.A_TO_Z -> notesWithStrokes.sortedBy { it.title.lowercase() }
+            SortOrder.Z_TO_A -> notesWithStrokes.sortedByDescending { it.title.lowercase() }
         }
     }.stateIn(
         scope = viewModelScope,

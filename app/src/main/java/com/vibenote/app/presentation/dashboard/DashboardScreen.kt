@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -424,19 +426,33 @@ fun NoteCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
         ) {
+            com.vibenote.app.presentation.dashboard.components.CanvasPreview(
+                strokes = note.strokes,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(VibeColors.BackgroundDark.copy(alpha = 0.3f))
+                    .padding(8.dp)
+            )
+            
+            Spacer(Modifier.height(8.dp))
+            
             Text(
                 text = note.title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                color = VibeColors.TextPrimary
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = VibeColors.TextPrimary,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
             Text(
                 text = formatDate(note.updatedAt),
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 color = VibeColors.TextMuted,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.padding(top = 4.dp)
             )
         }
     }

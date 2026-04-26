@@ -1,8 +1,13 @@
 package com.vibenote.app.presentation.canvas
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +24,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Redo
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.AlertDialog
@@ -57,10 +64,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vibenote.app.core.theme.VibeColors
+import androidx.compose.ui.platform.LocalContext
 import com.vibenote.app.domain.model.Stroke
 import com.vibenote.app.domain.model.StrokeType
 import kotlin.math.hypot
 import kotlin.math.abs
+
+fun List<Offset>.toSmoothedPath(): Path {
+    val path = Path()
+    if (size < 2) return path
+    path.moveTo(this[0].x, this[0].y)
+    for (i in 1 until size - 1) {
+        val midX = (this[i].x + this[i + 1].x) / 2f
+        val midY = (this[i].y + this[i + 1].y) / 2f
+        path.quadraticBezierTo(this[i].x, this[i].y, midX, midY)
+    }
+    path.lineTo(last().x, last().y)
+    return path
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,12 +96,16 @@ fun CanvasScreen(
     }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     var currentPath by remember { mutableStateOf(Path()) }
     var currentPoints by remember { mutableStateOf(listOf<Offset>()) }
     var showColorPicker by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showEditTitleDialog by remember { mutableStateOf(false) }
+    var showBackgroundPicker by remember { mutableStateOf(false) }
+    var showExportDialog by remember { mutableStateOf(false) }
+    var exportedUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
     var canvasScale by remember { mutableFloatStateOf(1f) }
     var canvasOffsetX by remember { mutableFloatStateOf(0f) }
@@ -104,7 +129,10 @@ fun CanvasScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
+                    IconButton(onClick = {
+                        viewModel.saveNow()
+                        onNavigateBack()
+                    }) {
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -143,6 +171,18 @@ fun CanvasScreen(
                         Icon(
                             Icons.Filled.Delete,
                             contentDescription = "Delete",
+                            tint = VibeColors.TextPrimary
+                        )
+                    }
+                    IconButton(onClick = {
+                        viewModel.exportAsPng(context) { uri ->
+                            exportedUri = uri
+                            showExportDialog = true
+                        }
+                    }) {
+                        Icon(
+                            Icons.Filled.Share,
+                            contentDescription = "Export as PNG",
                             tint = VibeColors.TextPrimary
                         )
                     }
@@ -200,6 +240,13 @@ fun CanvasScreen(
                             color = if (state.isShapeMode) VibeColors.BrandGreen else VibeColors.TextMuted
                         )
                     }
+                    IconButton(onClick = { showBackgroundPicker = !showBackgroundPicker }) {
+                        Icon(
+                            Icons.Default.GridOn,
+                            contentDescription = "Canvas background",
+                            tint = if (state.canvasBackground != "dark") VibeColors.BrandGreen else VibeColors.TextMuted
+                        )
+                    }
                 }
             }
 
@@ -241,6 +288,41 @@ fun CanvasScreen(
                 }
             }
 
+            // Background picker
+            if (showBackgroundPicker) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(VibeColors.SurfaceDeep)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(
+                        "dark" to VibeColors.BackgroundDark,
+                        "white" to Color.White,
+                        "lined" to VibeColors.SurfaceDeep,
+                        "dotted" to VibeColors.SurfaceDeep,
+                        "grid" to VibeColors.SurfaceDeep
+                    ).forEach { (type, color) ->
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                                .border(
+                                    if (state.canvasBackground == type) 3.dp else 1.dp,
+                                    if (state.canvasBackground == type) VibeColors.BrandGreen else VibeColors.BorderStandard,
+                                    CircleShape
+                                )
+                                .clickable {
+                                    viewModel.setCanvasBackground(type)
+                                    showBackgroundPicker = false
+                                }
+                        )
+                    }
+                }
+            }
+
             // Stroke width slider
             Row(
                 modifier = Modifier
@@ -267,7 +349,7 @@ fun CanvasScreen(
                 )
             }
 
-            // Canvas with gestures
+// Canvas with gestures
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -308,8 +390,11 @@ fun CanvasScreen(
                                     if (state.isShapeMode && currentPoints.size >= 5) {
                                         val shapeStroke = viewModel.applyShapeRecognition(currentPoints)
                                         if (shapeStroke != null) {
-                                            viewModel.startStroke(shapeStroke)
-                                            viewModel.updateStroke(pointString)
+                                            viewModel.startStroke(shapeStroke.copy(points = pointString))
+                                            viewModel.finishStroke()
+                                            currentPath = Path()
+                                            currentPoints = emptyList()
+                                            return@detectDragGestures
                                         }
                                     }
                                     
@@ -331,6 +416,63 @@ fun CanvasScreen(
                                 translationY = canvasOffsetY
                             )
                     ) {
+                        when (state.canvasBackground) {
+                            "white" -> drawRect(Color.White, size = size)
+                            "lined" -> {
+                                val spacing = 80f
+                                var y = 0f
+                                while (y < size.height) {
+                                    drawLine(
+                                        color = Color(0xFF2E2E2E),
+                                        start = Offset(0f, y),
+                                        end = Offset(size.width, y),
+                                        strokeWidth = 1f
+                                    )
+                                    y += spacing
+                                }
+                            }
+                            "dotted" -> {
+                                val spacing = 80f
+                                var x = 0f
+                                var y = 0f
+                                while (y < size.height) {
+                                    while (x < size.width) {
+                                        drawCircle(
+                                            color = Color(0xFF2E2E2E),
+                                            radius = 2f,
+                                            center = Offset(x, y)
+                                        )
+                                        x += spacing
+                                    }
+                                    x = 0f
+                                    y += spacing
+                                }
+                            }
+                            "grid" -> {
+                                val spacing = 80f
+                                var x = 0f
+                                while (x < size.width) {
+                                    drawLine(
+                                        color = Color(0xFF2E2E2E),
+                                        start = Offset(x, 0f),
+                                        end = Offset(x, size.height),
+                                        strokeWidth = 1f
+                                    )
+                                    x += spacing
+                                }
+                                var y = 0f
+                                while (y < size.height) {
+                                    drawLine(
+                                        color = Color(0xFF2E2E2E),
+                                        start = Offset(0f, y),
+                                        end = Offset(size.width, y),
+                                        strokeWidth = 1f
+                                    )
+                                    y += spacing
+                                }
+                            }
+                        }
+                        
                         state.strokes.forEach { stroke ->
                             if (stroke.points.isNotEmpty()) {
                                 val pointsList = stroke.points.split(";").mapNotNull { pair ->
@@ -382,12 +524,7 @@ fun CanvasScreen(
                                             )
                                         }
                                         else -> {
-                                            val path = Path().apply {
-                                                moveTo(pointsList[0].x, pointsList[0].y)
-                                                for (i in 1 until pointsList.size) {
-                                                    lineTo(pointsList[i].x, pointsList[i].y)
-                                                }
-                                            }
+                                            val path = pointsList.toSmoothedPath()
                                             drawPath(
                                                 path = path,
                                                 color = strokeColor,
@@ -410,12 +547,7 @@ fun CanvasScreen(
                                 else -> Color(state.selectedColor)
                             }
                             val renderWidth = if (state.isHighlighter) state.strokeWidth * 3 else state.strokeWidth
-                            val path = Path().apply {
-                                moveTo(currentPoints[0].x, currentPoints[0].y)
-                                for (i in 1 until currentPoints.size) {
-                                    lineTo(currentPoints[i].x, currentPoints[i].y)
-                                }
-                            }
+                            val path = currentPoints.toSmoothedPath()
                             drawPath(
                                 path = path,
                                 color = renderColor,
@@ -486,6 +618,41 @@ fun CanvasScreen(
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
                     Text("Cancel", color = VibeColors.TextMuted)
+                }
+            },
+            containerColor = VibeColors.BackgroundDark
+        )
+    }
+
+    // Export success dialog
+    if (showExportDialog && exportedUri != null) {
+        AlertDialog(
+            onDismissRequest = {
+                showExportDialog = false
+                exportedUri = null
+            },
+            title = { Text("Export Successful", color = VibeColors.TextPrimary) },
+            text = { Text("Note exported to Pictures/VibeNote", color = VibeColors.TextMuted) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "image/png"
+                        putExtra(Intent.EXTRA_STREAM, exportedUri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Note"))
+                    showExportDialog = false
+                    exportedUri = null
+                }) {
+                    Text("Share", color = VibeColors.BrandGreen)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showExportDialog = false
+                    exportedUri = null
+                }) {
+                    Text("Close", color = VibeColors.TextMuted)
                 }
             },
             containerColor = VibeColors.BackgroundDark

@@ -58,19 +58,23 @@ class NoteRepositoryImpl @Inject constructor(
         id = id,
         title = title,
         createdAt = createdAt,
+        updatedAt = updatedAt,
         strokeDataPath = strokeDataPath,
         isFavorite = isFavorite,
-        tags = if (tags.isBlank()) emptyList() else tags.split(",").filter { it.isNotBlank() },
-        folder = folder
+        tags = if (tags.isBlank()) emptyList() else tags.split("\u001F").filter { it.isNotBlank() },
+        folder = folder,
+        canvasBackground = canvasBackground
     )
 
     private fun Note.toEntity() = NoteEntity(
         id = id,
         title = title,
         createdAt = createdAt,
+        updatedAt = updatedAt,
         strokeDataPath = strokeDataPath,
         isFavorite = isFavorite,
-        tags = tags.joinToString(","),
-        folder = folder
+        tags = tags.joinToString("\u001F"),
+        folder = folder,
+        canvasBackground = canvasBackground
     )
 }

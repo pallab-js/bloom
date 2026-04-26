@@ -19,21 +19,25 @@
 - **Pinch-to-Zoom** - Two-finger pinch to zoom in/out (0.5x - 3x)
 - **Two-Finger Pan** - Navigate large canvases with two fingers
 - **Highlighter Tool** - Semi-transparent strokes for highlighting (40% opacity)
+- **Stroke Smoothing** - Bézier curve interpolation for smooth lines
+- **Canvas Backgrounds** - Choose from dark, white, lined, dotted, or grid backgrounds
 
 ### Drawing Tools
 - **Pen Tool** - Multiple colors with adjustable stroke width (2-20px)
 - **Eraser** - Remove mistakes easily
 - **Colors** - 8 preset colors: White, Brand Green, Red, Teal, Yellow, Mint, Coral, Lavender
-- **Undo/Redo** - Full history support
+- **Undo/Redo** - Full history support (capped at 50 entries)
 
 ### Organization
+- **Sort Options** - Sort by newest, oldest, last modified, A-Z, or Z-A
 - **Search** - Find notes by title instantly
-- **Tags/Labels** - Organize notes with custom tags
+- **Tags/Labels** - Organize notes with custom tags (comma-safe serialization)
 - **Folders** - Group notes into folders
 - **Favorites** - Mark important notes with favorites
+- **Note Actions** - Long-press for quick actions (favorite, duplicate, delete)
 
 ### Export & Share
-- **PNG Export** - Save notes as images
+- **PNG Export** - Save notes as images to Pictures/VibeNote
 - **Share Sheet** - Share via Android share intent
 
 ---
@@ -48,7 +52,7 @@
 | DI | Hilt |
 | Database | Room |
 | Async | Kotlin Coroutines + Flow |
-| Build | Gradle (Kotlin DSL) |
+| Build | Gradle |
 
 ---
 
@@ -66,7 +70,7 @@ app/src/main/java/com/vibenote/app/
 │   └── repository/  # Repository interfaces
 └── presentation/
     ├── canvas/      # Canvas screen + ViewModel + Shape recognition
-    ├── dashboard/  # Dashboard screen + ViewModel
+    ├── dashboard/   # Dashboard screen + ViewModel
     └── MainActivity.kt
 ```
 
@@ -80,12 +84,6 @@ app/src/main/java/com/vibenote/app/
 
 # Release build
 ./gradlew assembleRelease
-
-# Run tests
-./gradlew test
-
-# Lint
-./gradlew lint
 ```
 
 ---
@@ -102,7 +100,6 @@ app/src/main/java/com/vibenote/app/
 | ActionGreen | #00C573 | Buttons, actions |
 | TextPrimary | #FAFAFA | Primary text |
 | TextMuted | #898989 | Secondary text |
-| BorderSubtle | #242424 | Subtle borders |
 | BorderStandard | #2E2E2E | Standard borders |
 
 ### Typography
@@ -117,6 +114,7 @@ app/src/main/java/com/vibenote/app/
 - **Local Storage Only** - All data stored locally on device
 - **No Network Permissions** - App does not require internet
 - **Room Migrations** - Proper schema versioning for data integrity
+- **ProGuard Enabled** - Code obfuscation in release builds
 
 ---
 

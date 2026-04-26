@@ -44,7 +44,7 @@ public final class NoteDao_Impl implements NoteDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `notes` (`id`,`title`,`createdAt`,`strokeDataPath`,`isFavorite`,`tags`,`folder`) VALUES (?,?,?,?,?,?,?)";
+        return "INSERT OR REPLACE INTO `notes` (`id`,`title`,`createdAt`,`updatedAt`,`strokeDataPath`,`isFavorite`,`tags`,`folder`,`canvasBackground`) VALUES (?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -53,11 +53,13 @@ public final class NoteDao_Impl implements NoteDao {
         statement.bindString(1, entity.getId());
         statement.bindString(2, entity.getTitle());
         statement.bindLong(3, entity.getCreatedAt());
-        statement.bindString(4, entity.getStrokeDataPath());
+        statement.bindLong(4, entity.getUpdatedAt());
+        statement.bindString(5, entity.getStrokeDataPath());
         final int _tmp = entity.isFavorite() ? 1 : 0;
-        statement.bindLong(5, _tmp);
-        statement.bindString(6, entity.getTags());
-        statement.bindString(7, entity.getFolder());
+        statement.bindLong(6, _tmp);
+        statement.bindString(7, entity.getTags());
+        statement.bindString(8, entity.getFolder());
+        statement.bindString(9, entity.getCanvasBackground());
       }
     };
     this.__deletionAdapterOfNoteEntity = new EntityDeletionOrUpdateAdapter<NoteEntity>(__db) {
@@ -77,7 +79,7 @@ public final class NoteDao_Impl implements NoteDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "UPDATE OR ABORT `notes` SET `id` = ?,`title` = ?,`createdAt` = ?,`strokeDataPath` = ?,`isFavorite` = ?,`tags` = ?,`folder` = ? WHERE `id` = ?";
+        return "UPDATE OR ABORT `notes` SET `id` = ?,`title` = ?,`createdAt` = ?,`updatedAt` = ?,`strokeDataPath` = ?,`isFavorite` = ?,`tags` = ?,`folder` = ?,`canvasBackground` = ? WHERE `id` = ?";
       }
 
       @Override
@@ -86,12 +88,14 @@ public final class NoteDao_Impl implements NoteDao {
         statement.bindString(1, entity.getId());
         statement.bindString(2, entity.getTitle());
         statement.bindLong(3, entity.getCreatedAt());
-        statement.bindString(4, entity.getStrokeDataPath());
+        statement.bindLong(4, entity.getUpdatedAt());
+        statement.bindString(5, entity.getStrokeDataPath());
         final int _tmp = entity.isFavorite() ? 1 : 0;
-        statement.bindLong(5, _tmp);
-        statement.bindString(6, entity.getTags());
-        statement.bindString(7, entity.getFolder());
-        statement.bindString(8, entity.getId());
+        statement.bindLong(6, _tmp);
+        statement.bindString(7, entity.getTags());
+        statement.bindString(8, entity.getFolder());
+        statement.bindString(9, entity.getCanvasBackground());
+        statement.bindString(10, entity.getId());
       }
     };
   }
@@ -163,10 +167,12 @@ public final class NoteDao_Impl implements NoteDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfUpdatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "updatedAt");
           final int _cursorIndexOfStrokeDataPath = CursorUtil.getColumnIndexOrThrow(_cursor, "strokeDataPath");
           final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final int _cursorIndexOfTags = CursorUtil.getColumnIndexOrThrow(_cursor, "tags");
           final int _cursorIndexOfFolder = CursorUtil.getColumnIndexOrThrow(_cursor, "folder");
+          final int _cursorIndexOfCanvasBackground = CursorUtil.getColumnIndexOrThrow(_cursor, "canvasBackground");
           final List<NoteEntity> _result = new ArrayList<NoteEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final NoteEntity _item;
@@ -176,6 +182,8 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final long _tmpUpdatedAt;
+            _tmpUpdatedAt = _cursor.getLong(_cursorIndexOfUpdatedAt);
             final String _tmpStrokeDataPath;
             _tmpStrokeDataPath = _cursor.getString(_cursorIndexOfStrokeDataPath);
             final boolean _tmpIsFavorite;
@@ -186,7 +194,9 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder);
+            final String _tmpCanvasBackground;
+            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
           return _result;
@@ -215,10 +225,12 @@ public final class NoteDao_Impl implements NoteDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfUpdatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "updatedAt");
           final int _cursorIndexOfStrokeDataPath = CursorUtil.getColumnIndexOrThrow(_cursor, "strokeDataPath");
           final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final int _cursorIndexOfTags = CursorUtil.getColumnIndexOrThrow(_cursor, "tags");
           final int _cursorIndexOfFolder = CursorUtil.getColumnIndexOrThrow(_cursor, "folder");
+          final int _cursorIndexOfCanvasBackground = CursorUtil.getColumnIndexOrThrow(_cursor, "canvasBackground");
           final List<NoteEntity> _result = new ArrayList<NoteEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final NoteEntity _item;
@@ -228,6 +240,8 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final long _tmpUpdatedAt;
+            _tmpUpdatedAt = _cursor.getLong(_cursorIndexOfUpdatedAt);
             final String _tmpStrokeDataPath;
             _tmpStrokeDataPath = _cursor.getString(_cursorIndexOfStrokeDataPath);
             final boolean _tmpIsFavorite;
@@ -238,7 +252,9 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder);
+            final String _tmpCanvasBackground;
+            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
           return _result;
@@ -269,10 +285,12 @@ public final class NoteDao_Impl implements NoteDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfUpdatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "updatedAt");
           final int _cursorIndexOfStrokeDataPath = CursorUtil.getColumnIndexOrThrow(_cursor, "strokeDataPath");
           final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final int _cursorIndexOfTags = CursorUtil.getColumnIndexOrThrow(_cursor, "tags");
           final int _cursorIndexOfFolder = CursorUtil.getColumnIndexOrThrow(_cursor, "folder");
+          final int _cursorIndexOfCanvasBackground = CursorUtil.getColumnIndexOrThrow(_cursor, "canvasBackground");
           final List<NoteEntity> _result = new ArrayList<NoteEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final NoteEntity _item;
@@ -282,6 +300,8 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final long _tmpUpdatedAt;
+            _tmpUpdatedAt = _cursor.getLong(_cursorIndexOfUpdatedAt);
             final String _tmpStrokeDataPath;
             _tmpStrokeDataPath = _cursor.getString(_cursorIndexOfStrokeDataPath);
             final boolean _tmpIsFavorite;
@@ -292,7 +312,9 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder);
+            final String _tmpCanvasBackground;
+            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
           return _result;
@@ -323,10 +345,12 @@ public final class NoteDao_Impl implements NoteDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfUpdatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "updatedAt");
           final int _cursorIndexOfStrokeDataPath = CursorUtil.getColumnIndexOrThrow(_cursor, "strokeDataPath");
           final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final int _cursorIndexOfTags = CursorUtil.getColumnIndexOrThrow(_cursor, "tags");
           final int _cursorIndexOfFolder = CursorUtil.getColumnIndexOrThrow(_cursor, "folder");
+          final int _cursorIndexOfCanvasBackground = CursorUtil.getColumnIndexOrThrow(_cursor, "canvasBackground");
           final List<NoteEntity> _result = new ArrayList<NoteEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
             final NoteEntity _item;
@@ -336,6 +360,8 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final long _tmpUpdatedAt;
+            _tmpUpdatedAt = _cursor.getLong(_cursorIndexOfUpdatedAt);
             final String _tmpStrokeDataPath;
             _tmpStrokeDataPath = _cursor.getString(_cursorIndexOfStrokeDataPath);
             final boolean _tmpIsFavorite;
@@ -346,7 +372,9 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder);
+            final String _tmpCanvasBackground;
+            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _item = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
             _result.add(_item);
           }
           return _result;
@@ -378,10 +406,12 @@ public final class NoteDao_Impl implements NoteDao {
           final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
           final int _cursorIndexOfTitle = CursorUtil.getColumnIndexOrThrow(_cursor, "title");
           final int _cursorIndexOfCreatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "createdAt");
+          final int _cursorIndexOfUpdatedAt = CursorUtil.getColumnIndexOrThrow(_cursor, "updatedAt");
           final int _cursorIndexOfStrokeDataPath = CursorUtil.getColumnIndexOrThrow(_cursor, "strokeDataPath");
           final int _cursorIndexOfIsFavorite = CursorUtil.getColumnIndexOrThrow(_cursor, "isFavorite");
           final int _cursorIndexOfTags = CursorUtil.getColumnIndexOrThrow(_cursor, "tags");
           final int _cursorIndexOfFolder = CursorUtil.getColumnIndexOrThrow(_cursor, "folder");
+          final int _cursorIndexOfCanvasBackground = CursorUtil.getColumnIndexOrThrow(_cursor, "canvasBackground");
           final NoteEntity _result;
           if (_cursor.moveToFirst()) {
             final String _tmpId;
@@ -390,6 +420,8 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTitle = _cursor.getString(_cursorIndexOfTitle);
             final long _tmpCreatedAt;
             _tmpCreatedAt = _cursor.getLong(_cursorIndexOfCreatedAt);
+            final long _tmpUpdatedAt;
+            _tmpUpdatedAt = _cursor.getLong(_cursorIndexOfUpdatedAt);
             final String _tmpStrokeDataPath;
             _tmpStrokeDataPath = _cursor.getString(_cursorIndexOfStrokeDataPath);
             final boolean _tmpIsFavorite;
@@ -400,7 +432,9 @@ public final class NoteDao_Impl implements NoteDao {
             _tmpTags = _cursor.getString(_cursorIndexOfTags);
             final String _tmpFolder;
             _tmpFolder = _cursor.getString(_cursorIndexOfFolder);
-            _result = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder);
+            final String _tmpCanvasBackground;
+            _tmpCanvasBackground = _cursor.getString(_cursorIndexOfCanvasBackground);
+            _result = new NoteEntity(_tmpId,_tmpTitle,_tmpCreatedAt,_tmpUpdatedAt,_tmpStrokeDataPath,_tmpIsFavorite,_tmpTags,_tmpFolder,_tmpCanvasBackground);
           } else {
             _result = null;
           }

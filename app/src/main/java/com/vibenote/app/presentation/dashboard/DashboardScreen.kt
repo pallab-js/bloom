@@ -5,25 +5,34 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -45,7 +54,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vibenote.app.core.theme.VibeColors
-import com.vibenote.app.core.theme.VibePillButton
 import com.vibenote.app.domain.model.Note
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -60,8 +68,12 @@ fun DashboardScreen(
 ) {
     val notes: List<Note> by viewModel.notes.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val sortOrder by viewModel.sortOrder.collectAsStateWithLifecycle()
     var showSearch by remember { mutableStateOf(false) }
+    var showSortMenu by remember { mutableStateOf(false) }
     var noteToDelete by remember { mutableStateOf<Note?>(null) }
+    var selectedNote by remember { mutableStateOf<Note?>(null) }
+    var showNoteActions by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -82,13 +94,21 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
-                        Text(
-                            text = "VIBENOTE",
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Medium,
-                            color = VibeColors.TextPrimary
-                        )
+                        Column {
+                            Text(
+                                text = "VIBENOTE",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Medium,
+                                color = VibeColors.TextPrimary
+                            )
+                            Text(
+                                text = "${notes.size} note${if (notes.size != 1) "s" else ""}",
+                                fontSize = 11.sp,
+                                color = VibeColors.TextMuted,
+                                fontFamily = FontFamily.Monospace
+                            )
+                        }
                     }
                 },
                 navigationIcon = {
@@ -103,6 +123,55 @@ fun DashboardScreen(
                 },
                 actions = {
                     if (!showSearch) {
+                        Box {
+                            IconButton(onClick = { showSortMenu = true }) {
+                                Icon(
+                                    Icons.Default.Sort,
+                                    contentDescription = "Sort notes",
+                                    tint = VibeColors.TextPrimary
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = showSortMenu,
+                                onDismissRequest = { showSortMenu = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Newest first", color = VibeColors.TextPrimary) },
+                                    onClick = {
+                                        viewModel.setSortOrder(SortOrder.NEWEST_FIRST)
+                                        showSortMenu = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Oldest first", color = VibeColors.TextPrimary) },
+                                    onClick = {
+                                        viewModel.setSortOrder(SortOrder.OLDEST_FIRST)
+                                        showSortMenu = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Last modified", color = VibeColors.TextPrimary) },
+                                    onClick = {
+                                        viewModel.setSortOrder(SortOrder.LAST_MODIFIED)
+                                        showSortMenu = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("A to Z", color = VibeColors.TextPrimary) },
+                                    onClick = {
+                                        viewModel.setSortOrder(SortOrder.A_TO_Z)
+                                        showSortMenu = false
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text("Z to A", color = VibeColors.TextPrimary) },
+                                    onClick = {
+                                        viewModel.setSortOrder(SortOrder.Z_TO_A)
+                                        showSortMenu = false
+                                    }
+                                )
+                            }
+                        }
                         IconButton(onClick = { showSearch = true }) {
                             Icon(
                                 Icons.Default.Search,
@@ -111,11 +180,6 @@ fun DashboardScreen(
                             )
                         }
                     }
-                    VibePillButton(
-                        text = "New Note",
-                        onClick = onNewNote,
-                        isPrimary = true
-                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = VibeColors.BackgroundDark
@@ -136,21 +200,56 @@ fun DashboardScreen(
         },
         containerColor = VibeColors.BackgroundDark
     ) { padding ->
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(notes) { note: Note ->
+        if (notes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        Icons.Default.EditNote,
+                        contentDescription = null,
+                        tint = VibeColors.TextMuted,
+                        modifier = Modifier.size(64.dp)
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        "No notes yet",
+                        color = VibeColors.TextMuted,
+                        fontSize = 16.sp
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Tap + to create your first note",
+                        color = VibeColors.TextMuted,
+                        fontSize = 13.sp
+                    )
+                }
+            }
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+items(notes) { note: Note ->
                 NoteCard(
                     note = note,
                     onClick = { onNoteClick(note.id) },
-                    onLongClick = { noteToDelete = note }
+                    onLongClick = {
+                        selectedNote = note
+                        showNoteActions = true
+                    }
                 )
+            }
             }
         }
     }
@@ -176,6 +275,77 @@ fun DashboardScreen(
             },
             containerColor = VibeColors.BackgroundDark
         )
+    }
+
+    // Note actions bottom sheet
+    if (showNoteActions && selectedNote != null) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showNoteActions = false
+                selectedNote = null
+            },
+            containerColor = VibeColors.SurfaceDeep
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = selectedNote!!.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = VibeColors.TextPrimary,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                TextButton(
+                    onClick = {
+                        viewModel.toggleFavorite(selectedNote!!)
+                        showNoteActions = false
+                        selectedNote = null
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = if (selectedNote!!.isFavorite) "Remove from favorites" else "Add to favorites",
+                        color = VibeColors.TextPrimary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
+                TextButton(
+                    onClick = {
+                        viewModel.duplicateNote(selectedNote!!)
+                        showNoteActions = false
+                        selectedNote = null
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Duplicate",
+                        color = VibeColors.TextPrimary,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
+                TextButton(
+                    onClick = {
+                        noteToDelete = selectedNote
+                        showNoteActions = false
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Delete",
+                        color = VibeColors.TextMuted,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
+                Spacer(Modifier.height(32.dp))
+            }
+        }
     }
 }
 
@@ -213,7 +383,7 @@ fun NoteCard(
                 color = VibeColors.TextPrimary
             )
             Text(
-                text = formatDate(note.createdAt),
+                text = formatDate(note.updatedAt),
                 fontSize = 12.sp,
                 color = VibeColors.TextMuted,
                 modifier = Modifier.padding(top = 8.dp)

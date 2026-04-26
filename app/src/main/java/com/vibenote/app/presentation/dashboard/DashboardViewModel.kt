@@ -25,19 +25,31 @@ class DashboardViewModel @Inject constructor(
     private val _filter = MutableStateFlow<FilterType>(FilterType.All)
     val filter: StateFlow<FilterType> = _filter.asStateFlow()
 
+    private val _sortOrder = MutableStateFlow(SortOrder.NEWEST_FIRST)
+    val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
+
     val notes: StateFlow<List<Note>> = combine(
         noteRepository.getAllNotes(),
         _searchQuery,
-        _filter
-    ) { notes, query, filterType ->
+        _filter,
+        _sortOrder
+    ) { notes, query, filterType, sort ->
         var filtered = when (filterType) {
             FilterType.All -> notes
             FilterType.Favorites -> notes.filter { it.isFavorite }
             is FilterType.Tag -> notes.filter { filterType.tag in it.tags }
             is FilterType.Folder -> notes.filter { it.folder == filterType.folder }
         }
-        if (query.isBlank()) filtered
-        else filtered.filter { it.title.contains(query, ignoreCase = true) }
+        if (query.isNotBlank()) {
+            filtered = filtered.filter { it.title.contains(query, ignoreCase = true) }
+        }
+        when (sort) {
+            SortOrder.NEWEST_FIRST -> filtered.sortedByDescending { it.createdAt }
+            SortOrder.OLDEST_FIRST -> filtered.sortedBy { it.createdAt }
+            SortOrder.LAST_MODIFIED -> filtered.sortedByDescending { it.updatedAt }
+            SortOrder.A_TO_Z -> filtered.sortedBy { it.title.lowercase() }
+            SortOrder.Z_TO_A -> filtered.sortedByDescending { it.title.lowercase() }
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -50,6 +62,10 @@ class DashboardViewModel @Inject constructor(
 
     fun setFilter(filter: FilterType) {
         _filter.value = filter
+    }
+
+    fun setSortOrder(order: SortOrder) {
+        _sortOrder.value = order
     }
 
     fun filterByTag(tag: String) {
@@ -101,6 +117,18 @@ class DashboardViewModel @Inject constructor(
             noteRepository.deleteNote(note)
         }
     }
+
+    fun duplicateNote(note: Note) {
+        viewModelScope.launch {
+            val copy = note.copy(
+                id = java.util.UUID.randomUUID().toString(),
+                title = "${note.title} (copy)",
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis()
+            )
+            noteRepository.insertNote(copy)
+        }
+    }
 }
 
 sealed class FilterType {
@@ -108,4 +136,12 @@ sealed class FilterType {
     data object Favorites : FilterType()
     data class Tag(val tag: String) : FilterType()
     data class Folder(val folder: String) : FilterType()
+}
+
+enum class SortOrder {
+    NEWEST_FIRST,
+    OLDEST_FIRST,
+    LAST_MODIFIED,
+    A_TO_Z,
+    Z_TO_A
 }

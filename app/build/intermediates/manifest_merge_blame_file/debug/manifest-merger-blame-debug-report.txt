@@ -42,16 +42,16 @@
 28-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:11:9-33
 29        android:supportsRtl="true"
 29-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:12:9-35
-30        android:theme="@android:style/Theme.Material.NoActionBar" >
-30-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:13:9-66
+30        android:theme="@style/Theme.VibeNote" >
+30-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:13:9-46
 31        <activity
 31-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:14:9-22:20
 32            android:name="com.vibenote.app.presentation.MainActivity"
 32-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:15:13-54
 33            android:exported="true"
 33-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:16:13-36
-34            android:theme="@android:style/Theme.Material.NoActionBar" >
-34-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:17:13-70
+34            android:theme="@style/Theme.VibeNote" >
+34-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:17:13-50
 35            <intent-filter>
 35-->/Users/pallabpc/Desktop/vibenote/app/src/main/AndroidManifest.xml:18:13-21:29
 36                <action android:name="android.intent.action.MAIN" />

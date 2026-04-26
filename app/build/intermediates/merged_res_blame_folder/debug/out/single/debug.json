@@ -12,6 +12,10 @@
         "source": "com.vibenote.app-main-62:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
+        "merged": "com.vibenote.app-merged_res-60:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.vibenote.app-main-62:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
         "merged": "com.vibenote.app-merged_res-60:/mipmap-xxhdpi_ic_launcher.png.flat",
         "source": "com.vibenote.app-main-62:/mipmap-xxhdpi/ic_launcher.png"
     },

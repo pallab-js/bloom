@@ -9,8 +9,10 @@ data class NoteEntity(
     val id: String,
     val title: String,
     val createdAt: Long,
+    val updatedAt: Long = System.currentTimeMillis(),
     val strokeDataPath: String,
     val isFavorite: Boolean = false,
     val tags: String = "",
-    val folder: String = ""
+    val folder: String = "",
+    val canvasBackground: String = "dark"
 )

@@ -28,7 +28,7 @@ object DatabaseModule {
             NoteDatabase::class.java,
             "vibenote.db"
         )
-            .fallbackToDestructiveMigration()
+            .addMigrations(NoteDatabase.MIGRATION_1_2, NoteDatabase.MIGRATION_2_3, NoteDatabase.MIGRATION_3_4)
             .build()
     }
 

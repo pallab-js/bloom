@@ -55,6 +55,7 @@ data class CanvasState(
     val noteTitle: String = "Untitled",
     val isLoading: Boolean = false,
     val canvasBackground: CanvasBackground = CanvasBackground.DARK,
+    val contentJson: String = "",
     val errorMessage: String? = null
 )
 
@@ -105,7 +106,8 @@ class CanvasViewModel @Inject constructor(
             if (note != null) {
                 _state.update { it.copy(
                     noteTitle = note.title,
-                    canvasBackground = note.canvasBackground
+                    canvasBackground = note.canvasBackground,
+                    contentJson = note.contentJson ?: ""
                 ) }
                 
                 val strokesFile = File(context.filesDir, "strokes_$noteId.json")

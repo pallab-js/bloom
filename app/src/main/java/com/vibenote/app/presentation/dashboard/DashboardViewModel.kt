@@ -45,6 +45,9 @@ class DashboardViewModel @Inject constructor(
     private val _sortOrder = MutableStateFlow(SortOrder.NEWEST_FIRST)
     val sortOrder: StateFlow<SortOrder> = _sortOrder.asStateFlow()
 
+    private val _selectedNoteIds = MutableStateFlow<Set<String>>(emptySet())
+    val selectedNoteIds: StateFlow<Set<String>> = _selectedNoteIds.asStateFlow()
+
     init {
         viewModelScope.launch {
             dataStore.data.map { preferences ->

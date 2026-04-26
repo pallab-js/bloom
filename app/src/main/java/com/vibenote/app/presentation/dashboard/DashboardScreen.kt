@@ -6,54 +6,19 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sort
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -64,8 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.vibenote.app.core.theme.LocalVibeColors
-import com.vibenote.app.core.theme.VibeColors
 import com.vibenote.app.domain.model.Note
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -87,6 +52,9 @@ fun DashboardScreen(
     var selectedNote by remember { mutableStateOf<Note?>(null) }
     var showNoteActions by remember { mutableStateOf(false) }
 
+    val coroutineScope = rememberCoroutineScope()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
     val isSearchActive = searchQuery.isNotBlank()
     val isEmpty = notes.isEmpty()
 
@@ -98,35 +66,42 @@ fun DashboardScreen(
                         targetState = showSearch,
                         transitionSpec = {
                             if (targetState) {
-                                (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
-                                    slideOutHorizontally { width -> -width } + fadeOut())
+                                fadeIn() togetherWith fadeOut()
                             } else {
-                                (slideInHorizontally { width -> -width } + fadeIn()).togetherWith(
-                                    slideOutHorizontally { width -> width } + fadeOut())
-                            }.using(
-                                androidx.compose.animation.SizeTransform(clip = false)
-                            )
-                        },
-                        label = "SearchTransition"
+                                fadeIn() togetherWith fadeOut()
+                            }
+                        }, label = ""
                     ) { isSearching ->
                         if (isSearching) {
                             OutlinedTextField(
                                 value = searchQuery,
                                 onValueChange = { viewModel.setSearchQuery(it) },
                                 placeholder = { Text("Search notes...", color = LocalVibeColors.current.textMuted) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                shape = RoundedCornerShape(12.dp),
                                 singleLine = true,
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedTextColor = LocalVibeColors.current.textPrimary,
                                     unfocusedTextColor = LocalVibeColors.current.textPrimary,
                                     focusedBorderColor = LocalVibeColors.current.brand,
-                                    unfocusedBorderColor = LocalVibeColors.current.borderStandard
+                                    unfocusedBorderColor = LocalVibeColors.current.borderStandard,
+                                    focusedContainerColor = LocalVibeColors.current.surface,
+                                    unfocusedContainerColor = LocalVibeColors.current.surface
                                 ),
-                                modifier = Modifier.fillMaxWidth()
+                                trailingIcon = {
+                                    if (searchQuery.isNotEmpty()) {
+                                        IconButton(onClick = { viewModel.setSearchQuery("") }) {
+                                            Icon(Icons.Default.Add, contentDescription = "Clear", modifier = Modifier.size(20.dp).rotate(45f))
+                                        }
+                                    }
+                                }
                             )
                         } else {
                             Column {
                                 Text(
-                                    text = "Bloom",
+                                    text = "LIBRARY",
                                     fontSize = 18.sp,
                                     fontFamily = FontFamily.Monospace,
                                     fontWeight = FontWeight.Medium,
@@ -152,7 +127,7 @@ fun DashboardScreen(
                         }
                     } else {
                         IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
-                            Icon(androidx.compose.material.icons.Icons.Default.Menu, contentDescription = "Menu", tint = LocalVibeColors.current.textPrimary)
+                            Icon(Icons.Default.Menu, contentDescription = "Menu", tint = LocalVibeColors.current.textPrimary)
                         }
                     }
                 },
@@ -177,49 +152,24 @@ fun DashboardScreen(
                                 expanded = showSortMenu,
                                 onDismissRequest = { showSortMenu = false }
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Newest first", color = LocalVibeColors.current.textPrimary) },
-                                    onClick = {
-                                        viewModel.setSortOrder(SortOrder.NEWEST_FIRST)
-                                        showSortMenu = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Oldest first", color = LocalVibeColors.current.textPrimary) },
-                                    onClick = {
-                                        viewModel.setSortOrder(SortOrder.OLDEST_FIRST)
-                                        showSortMenu = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Last modified", color = LocalVibeColors.current.textPrimary) },
-                                    onClick = {
-                                        viewModel.setSortOrder(SortOrder.LAST_MODIFIED)
-                                        showSortMenu = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("A to Z", color = LocalVibeColors.current.textPrimary) },
-                                    onClick = {
-                                        viewModel.setSortOrder(SortOrder.A_TO_Z)
-                                        showSortMenu = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Z to A", color = LocalVibeColors.current.textPrimary) },
-                                    onClick = {
-                                        viewModel.setSortOrder(SortOrder.Z_TO_A)
-                                        showSortMenu = false
-                                    }
-                                )
+                                SortOrder.entries.forEach { order ->
+                                    DropdownMenuItem(
+                                        text = { Text(order.name.replace("_", " ").lowercase().capitalize()) },
+                                        onClick = {
+                                            viewModel.setSortOrder(order)
+                                            showSortMenu = false
+                                        },
+                                        leadingIcon = {
+                                            if (sortOrder == order) {
+                                                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                                            }
+                                        }
+                                    )
+                                }
                             }
                         }
                         IconButton(onClick = { showSearch = true }) {
-                            Icon(
-                                Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = LocalVibeColors.current.textPrimary
-                            )
+                            Icon(Icons.Default.Search, contentDescription = "Search", tint = LocalVibeColors.current.textPrimary)
                         }
                     }
                 },
@@ -231,97 +181,56 @@ fun DashboardScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onNewNote,
-                containerColor = LocalVibeColors.current.brand
+                containerColor = LocalVibeColors.current.brand,
+                contentColor = Color.Black,
+                shape = RoundedCornerShape(16.dp)
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "New Note",
-                    tint = LocalVibeColors.current.surface
-                )
+                Icon(Icons.Default.Add, contentDescription = "New Note")
             }
         },
         containerColor = LocalVibeColors.current.background
     ) { padding ->
-        if (isEmpty) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
+        Box(modifier = Modifier.padding(padding)) {
+            if (isEmpty) {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(32.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "✎✨",
-                        fontSize = 80.sp,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    Text(
-                        text = if (isSearchActive) "No notes match \"$searchQuery\"" else "Your garden is empty",
-                        color = LocalVibeColors.current.textPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = if (isSearchActive) "Try a different search term" else "Start blooming by creating your first note",
+                        text = if (isSearchActive) "No notes found matching your search" else "Your library is empty",
                         color = LocalVibeColors.current.textMuted,
-                        fontSize = 14.sp,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp
                     )
-                    if (!isSearchActive) {
-                        Spacer(Modifier.height(32.dp))
-                        androidx.compose.material3.Button(
-                            onClick = onNewNote,
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                                containerColor = LocalVibeColors.current.brand,
-                                contentColor = LocalVibeColors.current.surface
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.height(48.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text("Start Blooming", fontWeight = FontWeight.Bold)
-                        }
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(160.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(notes, key = { it.id }) { note ->
+                        NoteCard(
+                            note = note,
+                            onClick = { onNoteClick(note.id) },
+                            onLongClick = {
+                                selectedNote = note
+                                showNoteActions = true
+                            }
+                        )
                     }
                 }
-            }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-items(notes) { note: Note ->
-                NoteCard(
-                    note = note,
-                    onClick = { onNoteClick(note.id) },
-                    onLongClick = {
-                        selectedNote = note
-                        showNoteActions = true
-                    }
-                )
-            }
             }
         }
     }
 
-    // Delete confirmation dialog
-    noteToDelete?.let { note ->
+    if (noteToDelete != null) {
         AlertDialog(
             onDismissRequest = { noteToDelete = null },
-title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
-            text = { Text("Delete \"${note.title}\"?", color = LocalVibeColors.current.textMuted) },
+            title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
+            text = { Text("Are you sure you want to delete '${noteToDelete?.title}'?", color = LocalVibeColors.current.textMuted) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.deleteNote(noteToDelete!!)
@@ -335,18 +244,18 @@ title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
                     Text("Cancel", color = LocalVibeColors.current.textMuted)
                 }
             },
-            containerColor = LocalVibeColors.current.background
+            containerColor = LocalVibeColors.current.surface
         )
     }
 
-    // Note actions bottom sheet
     if (showNoteActions && selectedNote != null) {
         ModalBottomSheet(
-            onDismissRequest = {
+            onDismissRequest = { 
                 showNoteActions = false
                 selectedNote = null
             },
-            containerColor = LocalVibeColors.current.surface
+            containerColor = LocalVibeColors.current.surface,
+            dragHandle = { BottomSheetDefaults.DragHandle(color = LocalVibeColors.current.borderStandard) }
         ) {
             Column(
                 modifier = Modifier
@@ -354,9 +263,9 @@ title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
                     .padding(16.dp)
             ) {
                 Text(
-                    text = selectedNote!!.title,
+                    text = selectedNote?.title ?: "",
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                     color = LocalVibeColors.current.textPrimary,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -370,7 +279,7 @@ title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = if (selectedNote!!.isFavorite) "Remove from favorites" else "Add to favorites",
+                        text = if (selectedNote?.isFavorite == true) "Remove from Favorites" else "Add to Favorites",
                         color = LocalVibeColors.current.textPrimary,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -409,7 +318,6 @@ title = { Text("Delete Note", color = LocalVibeColors.current.textPrimary) },
             }
         }
     }
-}
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -466,48 +374,6 @@ fun NoteCard(
             )
             Text(
                 text = formatDate(note.updatedAt),
-                fontSize = 11.sp,
-                color = LocalVibeColors.current.textMuted,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-    }
-}
-
-private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp))
-}= formatDate(note.updatedAt),
-                fontSize = 11.sp,
-                color = LocalVibeColors.current.textMuted,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-    }
-}
-
-private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp))
-}               fontWeight = FontWeight.Medium,
-                color = LocalVibeColors.current.textPrimary,
-                maxLines = 1,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
-            Text(
-                text = formatDate(note.updatedAt),
-                fontSize = 11.sp,
-                color = LocalVibeColors.current.textMuted,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-        }
-    }
-}
-
-private fun formatDate(timestamp: Long): String {
-    val sdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-    return sdf.format(Date(timestamp))
-}= formatDate(note.updatedAt),
                 fontSize = 11.sp,
                 color = LocalVibeColors.current.textMuted,
                 modifier = Modifier.padding(top = 4.dp)

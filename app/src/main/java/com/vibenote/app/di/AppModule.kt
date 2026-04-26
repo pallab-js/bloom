@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.vibenote.app.data.local.NoteDao
+import com.vibenote.app.data.local.FolderDao
 import com.vibenote.app.data.local.NoteDatabase
 import com.vibenote.app.data.repository.NoteRepositoryImpl
 import com.vibenote.app.domain.repository.NoteRepository
@@ -32,7 +33,12 @@ object DatabaseModule {
             NoteDatabase::class.java,
             "vibenote.db"
         )
-            .addMigrations(NoteDatabase.MIGRATION_1_2, NoteDatabase.MIGRATION_2_3, NoteDatabase.MIGRATION_3_4)
+            .addMigrations(
+                NoteDatabase.MIGRATION_1_2, 
+                NoteDatabase.MIGRATION_2_3, 
+                NoteDatabase.MIGRATION_3_4,
+                NoteDatabase.MIGRATION_4_5
+            )
             .addCallback(object : androidx.room.RoomDatabase.Callback() {
                 override fun onCreate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
                     super.onCreate(db)
@@ -64,7 +70,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideFolderDao(database: NoteDatabase): com.vibenote.app.data.local.FolderDao {
+    fun provideFolderDao(database: NoteDatabase): FolderDao {
         return database.folderDao()
     }
 }

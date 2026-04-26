@@ -2,7 +2,10 @@ package com.vibenote.app.data.repository
 
 import com.vibenote.app.data.local.NoteDao
 import com.vibenote.app.data.local.NoteEntity
+import com.vibenote.app.data.local.FolderDao
+import com.vibenote.app.data.local.FolderEntity
 import com.vibenote.app.domain.model.Note
+import com.vibenote.app.domain.model.Folder
 import com.vibenote.app.domain.repository.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,7 +14,8 @@ import javax.inject.Singleton
 
 @Singleton
 class NoteRepositoryImpl @Inject constructor(
-    private val noteDao: NoteDao
+    private val noteDao: NoteDao,
+    private val folderDao: FolderDao
 ) : NoteRepository {
 
     override fun getAllNotes(): Flow<List<Note>> {

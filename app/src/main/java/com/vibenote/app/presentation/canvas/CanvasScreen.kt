@@ -135,16 +135,24 @@ fun BackgroundSwatch(type: CanvasBackground, isSelected: Boolean, onClick: () ->
 
 @Composable
 fun ToolButton(label: String, isActive: Boolean, onClick: () -> Unit) {
-    val bgColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.15f) else Color.Transparent
+    val bgColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.2f) else Color.Transparent
     val textColor = if (isActive) VibeColors.BrandGreen else VibeColors.TextMuted
+    val borderColor = if (isActive) VibeColors.BrandGreen.copy(alpha = 0.5f) else Color.Transparent
+    
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(bgColor)
+            .border(1.dp, borderColor, RoundedCornerShape(12.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
     ) {
-        Text(label, color = textColor, fontSize = 13.sp)
+        Text(
+            text = label,
+            color = textColor,
+            fontSize = 13.sp,
+            fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium
+        )
     }
 }
 
@@ -294,20 +302,49 @@ fun CanvasScreen(
                         .clip(CircleShape)
                         .background(Color(state.selectedColor))
                         .border(2.dp, VibeColors.BorderStandard, CircleShape)
-                        .clickable { showColorPicker = !showColorPicker }
+                        .clickable { 
+                            showColorPicker = !showColorPicker 
+                            showBackgroundPicker = false
+                        }
                 )
 
-                // Tool toggles
+                // Tool toggles - Grouped
                 Row(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(VibeColors.BackgroundDark.copy(alpha = 0.5f))
+                        .padding(4.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ToolButton(
-                        label = "Eraser",
-                        isActive = state.isEraser,
-                        onClick = { viewModel.toggleEraser() }
-                    )
-                    IconButton(onClick = { viewModel.toggleHighlighter() }) {
+                    IconButton(
+                        onClick = { 
+                            if (state.isEraser) viewModel.toggleEraser()
+                            if (state.isHighlighter) viewModel.toggleHighlighter()
+                        },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = "Pen",
+                            tint = if (!state.isEraser && !state.isHighlighter) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    
+                    IconButton(
+                        onClick = { viewModel.toggleEraser() },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.LayersClear, // Or similar for eraser
+                            contentDescription = "Eraser",
+                            tint = if (state.isEraser) VibeColors.BrandGreen else VibeColors.TextMuted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    IconButton(onClick = { viewModel.toggleHighlighter() }, modifier = Modifier.size(36.dp)) {
                         Icon(
                             Icons.Default.BorderColor,
                             contentDescription = "Highlighter",
@@ -315,16 +352,22 @@ fun CanvasScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     ToolButton(
                         label = "Shape",
                         isActive = state.isShapeMode,
                         onClick = { viewModel.toggleShapeMode() }
                     )
-                    IconButton(onClick = { showBackgroundPicker = !showBackgroundPicker }) {
+                    IconButton(onClick = { 
+                        showBackgroundPicker = !showBackgroundPicker 
+                        showColorPicker = false
+                    }) {
                         Icon(
                             Icons.Default.GridOn,
                             contentDescription = "Canvas background",
-                            tint = if (state.canvasBackground != CanvasBackground.DARK) VibeColors.BrandGreen else VibeColors.TextMuted
+                            tint = if (state.canvasBackground != com.vibenote.app.domain.model.CanvasBackground.DARK) VibeColors.BrandGreen else VibeColors.TextMuted
                         )
                     }
                 }

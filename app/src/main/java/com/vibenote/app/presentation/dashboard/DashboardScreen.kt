@@ -1,5 +1,6 @@
 package com.vibenote.app.presentation.dashboard
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -86,35 +87,51 @@ fun DashboardScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    if (showSearch) {
-                        OutlinedTextField(
-                            value = searchQuery,
-                            onValueChange = { viewModel.setSearchQuery(it) },
-                            placeholder = { Text("Search notes...", color = VibeColors.TextMuted) },
-                            singleLine = true,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = VibeColors.TextPrimary,
-                                unfocusedTextColor = VibeColors.TextPrimary,
-                                focusedBorderColor = VibeColors.BrandGreen,
-                                unfocusedBorderColor = VibeColors.BorderStandard
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    } else {
-                        Column {
-                            Text(
-                                text = "Bloom",
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Monospace,
-                                fontWeight = FontWeight.Medium,
-                                color = VibeColors.TextPrimary
+                    androidx.compose.animation.AnimatedContent(
+                        targetState = showSearch,
+                        transitionSpec = {
+                            if (targetState) {
+                                (slideInHorizontally { width -> width } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { width -> -width } + fadeOut())
+                            } else {
+                                (slideInHorizontally { width -> -width } + fadeIn()).togetherWith(
+                                    slideOutHorizontally { width -> width } + fadeOut())
+                            }.using(
+                                androidx.compose.animation.SizeTransform(clip = false)
                             )
-                            Text(
-                                text = "${notes.size} note${if (notes.size != 1) "s" else ""}",
-                                fontSize = 11.sp,
-                                color = VibeColors.TextMuted,
-                                fontFamily = FontFamily.Monospace
+                        },
+                        label = "SearchTransition"
+                    ) { isSearching ->
+                        if (isSearching) {
+                            OutlinedTextField(
+                                value = searchQuery,
+                                onValueChange = { viewModel.setSearchQuery(it) },
+                                placeholder = { Text("Search notes...", color = VibeColors.TextMuted) },
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = VibeColors.TextPrimary,
+                                    unfocusedTextColor = VibeColors.TextPrimary,
+                                    focusedBorderColor = VibeColors.BrandGreen,
+                                    unfocusedBorderColor = VibeColors.BorderStandard
+                                ),
+                                modifier = Modifier.fillMaxWidth()
                             )
+                        } else {
+                            Column {
+                                Text(
+                                    text = "Bloom",
+                                    fontSize = 18.sp,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Medium,
+                                    color = VibeColors.TextPrimary
+                                )
+                                Text(
+                                    text = "${notes.size} note${if (notes.size != 1) "s" else ""}",
+                                    fontSize = 11.sp,
+                                    color = VibeColors.TextMuted,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
                         }
                     }
                 },

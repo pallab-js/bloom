@@ -414,11 +414,12 @@ fun NoteCard(
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = VibeColors.BackgroundDark
+            containerColor = VibeColors.SurfaceDeep
         ),
-        border = BorderStroke(1.dp, VibeColors.BorderStandard),
+        border = BorderStroke(1.5.dp, VibeColors.BorderStandard.copy(alpha = 0.5f)),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
+            defaultElevation = 2.dp,
+            pressedElevation = 8.dp
         )
     ) {
         Column(

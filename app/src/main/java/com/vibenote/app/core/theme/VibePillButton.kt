@@ -25,7 +25,7 @@ fun VibePillButton(
         modifier = modifier,
         shape = RoundedCornerShape(9999.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isPrimary) LocalVibeColors.current.surface else LocalVibeColors.current.surface,
+            containerColor = if (isPrimary) LocalVibeColors.current.brand else LocalVibeColors.current.surface,
             contentColor = LocalVibeColors.current.textPrimary
         ),
         border = BorderStroke(

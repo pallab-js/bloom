@@ -6,7 +6,9 @@
 
 <p align="center">
   <strong>A premium handwritten note-taking app for Android</strong><br/>
-  Infinite canvas. Shape recognition. Professional organization.
+  Infinite canvas. Shape recognition. Professional organization.<br/>
+  <br/>
+  <img src="https://img.shields.io/badge/Status-Production_Ready-success" alt="Production Ready"/>
 </p>
 
 ---

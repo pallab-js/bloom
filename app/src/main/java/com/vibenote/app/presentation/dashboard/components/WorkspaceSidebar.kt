@@ -23,8 +23,8 @@ fun WorkspaceSidebar(
     onTagClick: (String) -> Unit
 ) {
     ModalDrawerSheet(
-        drawerContainerColor = VibeColors.SurfaceDeep,
-        drawerContentColor = VibeColors.TextPrimary
+        drawerContainerColor = VibeColors.Dark.surfaceDark,
+        drawerContentColor = VibeColors.Dark.textPrimaryDark
     ) {
         Spacer(Modifier.height(16.dp))
         Text(
@@ -32,7 +32,7 @@ fun WorkspaceSidebar(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(16.dp)
         )
-        Divider(color = VibeColors.BorderStandard)
+        Divider(color = VibeColors.Dark.borderStandardDark)
         
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             item {
@@ -40,7 +40,7 @@ fun WorkspaceSidebar(
                 Text(
                     "Folders",
                     style = MaterialTheme.typography.labelMedium,
-                    color = VibeColors.BrandGreen,
+                    color = VibeColors.Dark.brandGreen,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
@@ -61,12 +61,12 @@ fun WorkspaceSidebar(
             
             item {
                 Spacer(Modifier.height(16.dp))
-                Divider(color = VibeColors.BorderStandard)
+                Divider(color = VibeColors.Dark.borderStandardDark)
                 Spacer(Modifier.height(8.dp))
                 Text(
                     "Tags",
                     style = MaterialTheme.typography.labelMedium,
-                    color = VibeColors.BrandGreen,
+                    color = VibeColors.Dark.brandGreen,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }

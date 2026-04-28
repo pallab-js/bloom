@@ -11,31 +11,31 @@ import androidx.compose.runtime.staticCompositionLocalOf
 val LocalVibeColors = staticCompositionLocalOf { VibeColors.Dark }
 
 private val DarkColorScheme = darkColorScheme(
-    primary = VibeColors.BrandGreen,
-    secondary = VibeColors.ActionGreen,
-    background = VibeColors.BackgroundDark,
-    surface = VibeColors.SurfaceDeep,
-    onPrimary = VibeColors.TextPrimary,
-    onSecondary = VibeColors.TextPrimary,
-    onBackground = VibeColors.TextPrimary,
-    onSurface = VibeColors.TextPrimary,
-    surfaceVariant = VibeColors.BackgroundDark,
-    onSurfaceVariant = VibeColors.TextMuted,
-    outline = VibeColors.BorderStandard
+    primary = VibeColors.Dark.brandGreen,
+    secondary = VibeColors.Dark.actionGreen,
+    background = VibeColors.Dark.backgroundDark,
+    surface = VibeColors.Dark.surfaceDark,
+    onPrimary = VibeColors.Dark.textPrimaryDark,
+    onSecondary = VibeColors.Dark.textPrimaryDark,
+    onBackground = VibeColors.Dark.textPrimaryDark,
+    onSurface = VibeColors.Dark.textPrimaryDark,
+    surfaceVariant = VibeColors.Dark.backgroundDark,
+    onSurfaceVariant = VibeColors.Dark.textMutedDark,
+    outline = VibeColors.Dark.borderStandardDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = VibeColors.BrandGreen,
-    secondary = VibeColors.ActionGreen,
-    background = VibeColors.Light.background,
-    surface = VibeColors.Light.surface,
-    onPrimary = VibeColors.Light.textPrimary,
-    onSecondary = VibeColors.Light.textPrimary,
-    onBackground = VibeColors.Light.textPrimary,
-    onSurface = VibeColors.Light.textPrimary,
-    surfaceVariant = VibeColors.Light.background,
-    onSurfaceVariant = VibeColors.Light.textMuted,
-    outline = VibeColors.Light.borderStandard
+    primary = VibeColors.Light.brandGreen,
+    secondary = VibeColors.Light.actionGreen,
+    background = VibeColors.Light.backgroundLight,
+    surface = VibeColors.Light.surfaceLight,
+    onPrimary = VibeColors.Light.textPrimaryLight,
+    onSecondary = VibeColors.Light.textPrimaryLight,
+    onBackground = VibeColors.Light.textPrimaryLight,
+    onSurface = VibeColors.Light.textPrimaryLight,
+    surfaceVariant = VibeColors.Light.backgroundLight,
+    onSurfaceVariant = VibeColors.Light.textMutedLight,
+    outline = VibeColors.Light.borderStandardLight
 )
 
 @Composable
